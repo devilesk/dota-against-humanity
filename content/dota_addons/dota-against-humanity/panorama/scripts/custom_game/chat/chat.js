@@ -4,34 +4,49 @@ var m_ChatMessagePanels = [];
 var localPlayerId;
 var currentPlayerId;
 
+function InstantiateChatPanel(panel) {		
+    panel.FindChildTraverse("chat-input").SetPanelEvent("oninputsubmit", OnChatMessageEntered);		
+    panel.FindChildTraverse("chat-input-button").SetPanelEvent("onactivate", OnChatMessageEntered);		
+}
+
 function CreateChatMessagePanel(message, playerID) {
-    $.Msg('ReceiveChatMessage', message, playerID);
+    //$.Msg("ReceiveChatMessage", message, playerID);
     var parentPanel = $("#chat-message-container");
-    var chatMessagePanel = $.CreatePanel("Panel", parentPanel, "");
-    chatMessagePanel.BLoadLayout("file://{resources}/layout/custom_game/chat/chat_message.xml", false, false);
-    chatMessagePanel.SetChatMessage(message, playerID);
-    m_ChatMessagePanels.push(chatMessagePanel);
+    var panel = $.CreatePanel("Panel", parentPanel, "");
+    panel.SetHasClass("chat-message-row", true);
+    var label = $.CreatePanel("Label", panel, "");
+    label.SetHasClass("chat-message", true);
+    label.html = true;
+    label.hittest = false;    
+    label.text = "<span class=\"chat-name player-color-" + playerID + "\">" + Players.GetPlayerName(playerID) + ": </span>" + message;
+    
+    m_ChatMessagePanels.push(panel);
 }
 
 function CreateChatEventPanel(message, playerID) {
-    $.Msg('ReceiveChatEvent', message, playerID);
+    //$.Msg("ReceiveChatEvent", message, playerID);
     var parentPanel = $("#chat-message-container");
-    var chatMessagePanel = $.CreatePanel("Panel", parentPanel, "");
-    chatMessagePanel.BLoadLayout("file://{resources}/layout/custom_game/chat/chat_message.xml", false, false);
-    chatMessagePanel.SetChatEvent(message, playerID);
-    m_ChatMessagePanels.push(chatMessagePanel);
+    var panel = $.CreatePanel("Panel", parentPanel, "");
+    panel.SetHasClass("chat-message-row", true);
+    var label = $.CreatePanel("Label", panel, "");
+    label.SetHasClass("chat-message", true);
+    label.html = true;
+    label.hittest = false;    
+    var msg = message.replace(/%s/g, Players.GetPlayerName(playerID));
+    label.text = "<span class=\"chat-name player-color-" + playerID + "\">" + msg + "</span>";
+    
+    m_ChatMessagePanels.push(panel);
 }
 
 function OnChatMessageEntered() {
-    $.Msg('OnChatMessageEntered', $('#chat-input').text);
-    if ($('#chat-input').text != "") {
+    //$.Msg("OnChatMessageEntered", $("#chat-input").text);
+    if ($("#chat-input").text != "") {
         GameEvents.SendCustomGameEventToServer("send_chat_message", {
-            "message": $('#chat-input').text,
+            "message": $("#chat-input").text,
             "playerID": currentPlayerId
         });
     }
-    $('#chat-input').text = "";
-    $.Msg(GameUI.CustomUIConfig());
+    $("#chat-input").text = "";
 }
 
 function ReceiveChatMessage(msg) {

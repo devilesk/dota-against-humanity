@@ -9,9 +9,9 @@ function IsFlyoutScoreboardVisible() {
 
 function SetFlyoutScoreboardVisible(bVisible) {
     $.GetContextPanel().SetHasClass("flyout_scoreboard_visible", bVisible);
-    $.Msg('SetFlyoutScoreboardVisible');
+    //$.Msg('SetFlyoutScoreboardVisible');
     GameUI.CustomUIConfig().bScoreboardVisible = bVisible;
-    GameUI.CustomUIConfig().ScoreboardButtonContext.FindChild("scoreboard-button").SetHasClass("active", GameUI.CustomUIConfig().bScoreboardVisible);
+    GameUI.CustomUIConfig().ScoreboardButton.SetHasClass("active", GameUI.CustomUIConfig().bScoreboardVisible);
     if (bVisible) {
         //ScoreboardUpdater_SetScoreboardActive( g_ScoreboardHandle, true );
     } else {
@@ -22,7 +22,7 @@ function SetFlyoutScoreboardVisible(bVisible) {
 function ToggleFlyoutScoreboardVisible() {
     $.GetContextPanel().ToggleClass("flyout_scoreboard_visible");
     GameUI.CustomUIConfig().bScoreboardVisible = $.GetContextPanel().BHasClass("flyout_scoreboard_visible");
-    $.Msg('ToggleFlyoutScoreboardVisible');
+    //$.Msg('ToggleFlyoutScoreboardVisible');
 }
 
 function CreatePlayerPanels() {
@@ -84,12 +84,16 @@ function UpdatePlayers(msg) {
     //g_ScoreboardHandle = ScoreboardUpdater_InitializeScoreboard( scoreboardConfig, $( "#TeamsContainer" ) );
 
     SetFlyoutScoreboardVisible(false);
-    $.GetContextPanel().SetFlyoutScoreboardVisible = SetFlyoutScoreboardVisible;
-    $.Msg("scoreboard context panel", $.GetContextPanel());
-    $.GetContextPanel().IsFlyoutScoreboardVisible = IsFlyoutScoreboardVisible;
-    $.GetContextPanel().ToggleFlyoutScoreboardVisible = ToggleFlyoutScoreboardVisible;
+    
     $.RegisterEventHandler("DOTACustomUI_SetFlyoutScoreboardVisible", $.GetContextPanel(), SetFlyoutScoreboardVisible);
 
     GameEvents.Subscribe("update_players_ui", UpdatePlayers);
+    
+    GameUI.CustomUIConfig().Scoreboard = {
+        SetFlyoutScoreboardVisible: SetFlyoutScoreboardVisible,
+        IsFlyoutScoreboardVisible: IsFlyoutScoreboardVisible,
+        ToggleFlyoutScoreboardVisible: ToggleFlyoutScoreboardVisible
+    };
+    
     CreatePlayerPanels();
 })();

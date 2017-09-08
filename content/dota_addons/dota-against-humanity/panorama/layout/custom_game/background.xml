@@ -2,13 +2,19 @@
     <styles>
         <include src="file://{resources}/styles/dotastyles.css" />
         <include src="file://{resources}/styles/custom_game/background.css" />
+        <include src="file://{resources}/styles/custom_game/scoreboard_button.css" />
     </styles>
+    <scripts>
+        <include src="file://{resources}/scripts/custom_game/scoreboard_button.js" />
+    </scripts>
     <Panel class="outer-container" hittest="false">
         <Panel class="controls-container" hittest="false">
-            <Button id="DashboardButton" hittest="false" />
-            <Button id="scoreboard-button" onactivate="OnScoreboardButtonPressed()">
-                <Label id="scoreboard-button-label" text="#scoreboard_button_label" />
-            </Button>
+            <Panel class="button-container" hittest="false">
+                <Button id="DashboardButton" hittest="false" />
+                <Button id="scoreboard-button" onactivate="OnScoreboardButtonPressed()">
+                    <Label id="scoreboard-button-label" text="#scoreboard_button_label" />
+                </Button>
+            </Panel>
         </Panel>
         <Panel class="inner-container" hittest="false"></Panel>
         <Panel class="right-edge" hittest="false">

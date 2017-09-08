@@ -2,10 +2,25 @@
     <styles>
         <include src="file://{resources}/styles/dotastyles.css" />
         <include src="file://{resources}/styles/custom_game/dah.css" />
+        <include src="file://{resources}/styles/custom_game/chat/chat.css" />
     </styles>
     <scripts>
+        <include src="file://{resources}/scripts/custom_game/chat/chat.js" />
         <include src="file://{resources}/scripts/custom_game/dah.js" />
     </scripts>
+    <snippets>
+        <snippet name="chat-panel">
+            <Panel class="chat-container" hittest="false">
+                <Panel id="chat-message-container" hittest="false" />
+                <Panel id="chat-input-container" hittest="false">
+                    <TextEntry id="chat-input" placeholder="Enter message..." />
+                    <Button id="chat-input-button">
+                        <Label id="chat-input-button-label" text="Send" />
+                    </Button>
+                </Panel>
+            </Panel>
+        </snippet>
+    </snippets>
     <Panel class="container" hittest="false">
         <Panel class="right-container" hittest="false">
             <Panel id="chat-container" hittest="false"></Panel>

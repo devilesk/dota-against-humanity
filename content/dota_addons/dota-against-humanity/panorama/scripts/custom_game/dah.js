@@ -122,7 +122,8 @@ function CreateWhiteCardPanels() {
 function CreateChatPanel() {
     var parentPanel = $("#chat-container");
     m_ChatPanel = $.CreatePanel("Panel", parentPanel, "");
-    m_ChatPanel.BLoadLayout("file://{resources}/layout/custom_game/chat/chat.xml", false, false);
+    m_ChatPanel.BLoadLayoutSnippet("chat-panel");
+    InstantiateChatPanel(m_ChatPanel);
 }
 /*
 function OnPlayPressed(id) {

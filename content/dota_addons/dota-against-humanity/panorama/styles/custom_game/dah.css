@@ -1,9 +1,8 @@
 .container {
-    margin-top: 44px;
     width: 1920px;
     /*border: 1px solid red;*/
     
-    height: 1036px;
+    height: 1080px;
     flow-children: right;
     /*background-color: gradient( linear, 0% 0%, 0% 100%, from( #588c46 ), to( #1f3b08 ) );*/
     /*opacity: .5;*/
@@ -12,14 +11,14 @@
     /*border: 1px solid yellow;*/
     
     height: 1036px;
-    width: 80%;
+    width: 1528px;
     flow-children: down;
 }
 .right-container {
     /*border: 1px solid green;*/
-    
+    margin-top: 44px;
     height: 1036px;
-    width: 20%;
+    width: 392px;
     /*flow-children: down;*/
 }
 #chat-container {
@@ -41,7 +40,7 @@
     width: 20%;
     padding: 10px;
     background-color: black;
-    border-radius: 10px;
+    //border-radius: 10px;
     margin: 10px;
 }
 .timer-value {
@@ -68,7 +67,7 @@
     height: 100%;
     width: 80%;
     background-color: black;
-    border-radius: 10px;
+    //border-radius: 10px;
     margin: 10px;
     flow-children: down;
 }
