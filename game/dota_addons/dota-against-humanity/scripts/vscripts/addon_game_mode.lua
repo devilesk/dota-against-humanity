@@ -12,6 +12,17 @@ PLAYER_READY_STATE = {}
 STARTED = false
 DEBUG_FAKE_CLIENTS = true
 DEBUG_MAX_BOTS = 3
+DEBUG_HOUSE_RULES_STATE = {
+    -- [DAH.HOUSE_RULE.PACKING_HEAT]        = true,
+    -- [DAH.HOUSE_RULE.RANDO_CARDISSIAN]    = true,
+    -- [DAH.HOUSE_RULE.COUP_DETAT]          = true,
+    -- [DAH.HOUSE_RULE.GOD_IS_DEAD]         = true,
+    -- [DAH.HOUSE_RULE.SURVIVAL_FITTEST]    = true,
+    -- [DAH.HOUSE_RULE.NEVER_EVER]          = true,
+    -- [DAH.HOUSE_RULE.REBOOTING_UNIVERSE]  = true,
+    -- [DAH.HOUSE_RULE.EXECUTIVE_PRIVILEGE] = true,
+    -- [DAH.HOUSE_RULE.BETTER_LUCK]         = true,
+}
 
 if GameMode == nil then
     GameMode = class({})
@@ -129,8 +140,14 @@ function GameMode:OnGameRulesStateChange()
                 end
             end
         end
-        print("PLAYERS LIST")
-        players:Dump()
+        --print("PLAYERS LIST")
+        --players:Dump()
+        
+        print("DEBUG_HOUSE_RULES_STATE")
+        for k,v in pairs(DEBUG_HOUSE_RULES_STATE) do
+            print(k, v)
+            HOUSE_RULES_STATE[k] = v
+        end
         
         local data = LoadKeyValues("scripts/kv/cards.kv")
         GameRules.AddonTemplate.dah = DAH(HOUSE_RULES_STATE, players, data)
