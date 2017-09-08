@@ -1,0 +1,43 @@
+<root>
+    <styles>
+        <include src="file://{resources}/styles/dotastyles.css" />
+        <include src="file://{resources}/styles/custom_game/game_setup.css" />
+    </styles>
+    <scripts>
+        <include src="file://{resources}/scripts/custom_game/game_setup.js" />
+    </scripts>
+    <Panel class="GameSetupRoot">
+        <!--Countdown timer-->
+        <Panel id="header" class="">
+            <Panel id="house-rules-header" class="block">
+                <Label id="house-rules-label" class="header" text="#house_rules_label" />
+            </Panel>
+            <Panel id="StartGameCountdownTimer" class="block">
+                <Label id="SetupTimer-label" text="#setuptimer_label" />
+                <Label id="SetupTimer" text="{i:countdown_timer_seconds}" />
+            </Panel>
+        </Panel>
+        <Panel id="house-rules-description-container" class="block">
+            <Label id="house-rules-description-label" text="#house_rules_description_label" />
+            <!--<DropDown id="player-debug" oninputsubmit="OnDropDownChanged()">
+        <Label text="Player 0" id="entry0"/>
+        <Label text="Player 1" id="entry1"/>
+        <Label text="Player 2" id="entry2"/>
+        <Label text="Player 3" id="entry3"/>
+        <Label text="Player 4" id="entry4"/>
+        <Label text="Player 5" id="entry5"/>
+        <Label text="Player 6" id="entry6"/>
+        <Label text="Player 7" id="entry7"/>
+      </DropDown>-->
+        </Panel>
+        <Panel id="house-rules-container" class=""></Panel>
+        <Panel id="ready-button-container" class="">
+            <Panel id="ready-button-wrapper">
+                <ToggleButton id="ready-button" checked="true" text="" onactivate="OnReadyButtonPressed()">
+                    <Label id="ready-button-label" text="#ready_button_label" />
+                </ToggleButton>
+            </Panel>
+            <Panel id="player-ready-container" class=""></Panel>
+        </Panel>
+    </Panel>
+</root>

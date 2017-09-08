@@ -1,0 +1,111 @@
+.GameSetupRoot {
+    width: 800px;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    horizontal-align: right;
+    padding: 50px;
+    flow-children: down;
+    background-color: gradient( linear, 100% 0%, 100% 100%, from( #111111), color-stop( 0.01, #202327), color-stop( 0.2, #141619ff), to( #000000dd));
+}
+.block {
+    background-color: black;
+    padding: 10px;
+    color: white;
+    margin-bottom: 20px;
+}
+.header {
+    font-size: 30;
+}
+#header {
+    flow-children: right;
+    width: 100%;
+    margin-bottom: 20px;
+}
+#house-rules-header {
+    margin: 0;
+}
+#StartGameCountdownTimer {
+    width: 230px;
+    horizontal-align: right;
+    margin: 0;
+    flow-children: right;
+}
+#SetupTimer-label {
+    vertical-align: middle;
+    font-size: 24;
+}
+#SetupTimer {
+    font-size: 30;
+    width: 100%;
+    text-align: center;
+}
+#house-rules-container {
+    flow-children: down;
+    width: 100%;
+    margin-right: -8px;
+    overflow: squish scroll;
+    height: 700px;
+}
+.house-rules-block {
+    width: 100%;
+    flow-children: right-wrap;
+    margin-right: 18px;
+    border-left: 6px solid darkred;
+}
+.vote_pass {
+    border-left: 6px solid green;
+}
+.rule-input {
+    width: 100%;
+    flow-children: down;
+}
+.rule-header {
+    font-size: 24;
+    width: 100%;
+    margin-top: -24px;
+    margin-left: 30px;
+}
+.rule-description {
+    width: 100%;
+    margin-left: 30px;
+}
+.rule-toggle {
+    flow-children: down;
+    padding: 10px;
+}
+#ready-button-container {
+    width: 100%;
+    margin-top: 10px;
+    flow-children: right-wrap;
+    background-color: black;
+    padding: 10px;
+    margin-right: 10px;
+}
+#ready-button-wrapper {
+    background-color: #111;
+    padding: 0px 4px;
+    margin-right: 20px;
+}
+#ready-button {} #ready-button-label {
+    font-size: 24;
+}
+.vote-results-container {
+    width: 100%;
+    margin-left: 30px;
+    /*border-top: 1px solid #aaa;
+  margin-top: 4px;
+  padding-top: 4px;*/
+    
+    flow-children: right;
+}
+.divider {
+    width: 100%;
+    border: 2px solid white;
+    margin-bottom: 20px;
+    opacity: .2;
+}
+#player-ready-container {
+    width: 500px;
+    flow-children: right;
+}

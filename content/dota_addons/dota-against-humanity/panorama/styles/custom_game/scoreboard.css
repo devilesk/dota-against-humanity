@@ -1,0 +1,30 @@
+@define BACKGROUND_COLOR: #000000;
+@define BACKGROUND_COLOR_WHITE: #FFFFFF28;
+.FlyoutScoreboardRoot {
+    horizontal-align: left;
+    vertical-align: top;
+    margin-top: 44px;
+    height: 1036px;
+    width: 392px;
+    flow-children: down;
+    padding: 10px;
+    padding-right: 0;
+    background-color: gradient( linear, 0% 0%, 0% 100%, from( #588c46), to( #1f3b08));
+    /*transform: translatex( 2520px );*/
+    
+    transform: translatex( -392px);
+    transition-property: transform;
+    transition-duration: 0.1s;
+}
+.FlyoutScoreboardRoot.flyout_scoreboard_visible {
+    transform: translatey( 0px);
+    /*transform: translatex( 1528px );*/
+    
+    transform: translatex( 0px);
+}
+#players-container {
+    flow-children: down;
+    width: 100%;
+    height: 100%;
+    overflow: squish scroll;
+}

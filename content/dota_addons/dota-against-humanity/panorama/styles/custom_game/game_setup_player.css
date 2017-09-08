@@ -1,0 +1,17 @@
+.TeamSelectPlayer {
+    flow-children: right;
+    vertical-align: middle;
+}
+DOTAAvatarImage {
+    width: 32px;
+    height: 32px;
+    border: 1px solid #ccc;
+    margin: 3px;
+    vertical-align: middle;
+}
+.no_vote {
+    opacity: .2;
+}
+.vote {
+    opacity: 1;
+}

@@ -1,0 +1,28 @@
+@define BACKGROUND_COLOR: #000000;
+@define BACKGROUND_COLOR_WHITE: #FFFFFF28;
+.scoreboard-button-container {
+    margin-left: 50px;
+}
+#scoreboard-button {
+    border: 1px solid #333;
+    background-color: #222;
+    width: 130px;
+    height: 40px;
+    margin-top: 2px;
+    padding-top: 2px;
+}
+#scoreboard-button.active {
+    border: 1px solid #aaa;
+    padding-top: 1px;
+}
+#scoreboard-button:hover {
+    border: 1px solid #aaa;
+}
+#scoreboard-button:active {} #scoreboard-button:hover > #scoreboard-button-label {} #scoreboard-button:active > #scoreboard-button-label {} #scoreboard-button.active > #scoreboard-button-label {
+    font-weight: bold;
+}
+#scoreboard-button-label {
+    text-align: center;
+    vertical-align: middle;
+    width: 100%;
+}

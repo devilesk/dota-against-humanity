@@ -1,0 +1,73 @@
+.winner .card {
+    background-color: orange;
+}
+.card-wrapper {
+    margin: 1px;
+}
+.card-wrapper-right.pair {
+    border: 1px solid white;
+    border-left: 1px none white;
+    margin: 0px;
+}
+.card-wrapper-left.pair {
+    border: 1px solid white;
+    border-right: 0px none white;
+    margin: 0px;
+}
+.card {
+    border-radius: 5px;
+    width: 210px;
+    height: 230px;
+    padding: 15px;
+    margin: 4px;
+    opacity: 0.95;
+    flow-children: down;
+    box-shadow: #000 2px 2px 8px 0px;
+}
+.card:active {
+    border: 1px solid black;
+}
+.card:hover {
+    opacity: 1;
+}
+.card-white {
+    background-color: white;
+}
+.card Label {
+    font-size: 18;
+    font-weight: bold;
+    color: black;
+}
+.card-bottom {
+    vertical-align: bottom;
+    width: 100%;
+    flow-children: right-wrap;
+}
+.card-owner {
+    width: 100%;
+    text-align: center;
+    padding-bottom: 5px;
+}
+.card-selection-number {
+    text-align: left;
+    width: 45%;
+    horizontal-align: left;
+}
+.card-discard {
+    width: 45%;
+    horizontal-align: right;
+    border-radius: 5px;
+    background-color: #eee;
+}
+.card-discard:hover {
+    background-color: #ddd;
+}
+.card-discard:active {
+    background-color: #ccc;
+}
+Label.card-discard-label {
+    text-align: center;
+    width: 100%;
+    font-size: 14;
+    padding-top: 3px;
+}

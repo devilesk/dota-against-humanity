@@ -1,0 +1,18 @@
+<root>
+    <styles>
+        <include src="file://{resources}/styles/dotastyles.css" />
+        <include src="file://{resources}/styles/custom_game/player.css" />
+    </styles>
+    <scripts>
+        <include src="file://{resources}/scripts/custom_game/player.js" />
+    </scripts>
+    <Panel class="player-container" hittest="false">
+        <Panel class="row" hittest="false">
+            <Label id="player-name" class="player-name" text="" hittest="false" />
+        </Panel>
+        <Panel class="row">
+            <Label id="player-points" class="player-points" text="" hittest="false" />
+            <Label id="player-czar" class="player-czar" text="#czar_label" hittest="false" />
+        </Panel>
+    </Panel>
+</root>

@@ -1,0 +1,37 @@
+<root>
+    <styles>
+        <include src="file://{resources}/styles/dotastyles.css" />
+        <include src="file://{resources}/styles/custom_game/dah.css" />
+    </styles>
+    <scripts>
+        <include src="file://{resources}/scripts/custom_game/dah.js" />
+    </scripts>
+    <Panel class="container" hittest="false">
+        <Panel class="right-container" hittest="false">
+            <Panel id="chat-container" hittest="false"></Panel>
+        </Panel>
+        <Panel class="left-container" hittest="false">
+            <Panel class="question-container" hittest="false">
+                <Panel class="right-question-container" hittest="false">
+                    <Label id="black-question" class="question-label slide-in" html="true" text="" hittest="false" />
+                    <Label id="notification-label" class="notification-label slide-in" html="true" text="" hittest="false" />
+                </Panel>
+                <Panel class="timer-container" hittest="false">
+                    <Label id="timer-value" class="timer-value" text="" hittest="false" />
+                    <Label id="timer-label" class="timer-label" text="" hittest="false" />
+                </Panel>
+            </Panel>
+            <Panel id="main-container" class="main-container" hittest="false">
+                <Panel id="white-card-container" class="cards-container" hittest="false"></Panel>
+                <Panel id="controls-container" class="controls-container" hittest="false">
+                    <Button id="view-button" class="button" onactivate="OnViewPressed('view-button')">
+                        <Label id="view-button-label" text="#view_button_label" />
+                    </Button>
+                    <Button id="discard-all-button" class="button" onactivate="OnDiscardAllPressed('discard-all-button')">
+                        <Label id="discard-all-button-label" text="#discard_all_button_label" />
+                    </Button>
+                </Panel>
+            </Panel>
+        </Panel>
+    </Panel>
+</root>

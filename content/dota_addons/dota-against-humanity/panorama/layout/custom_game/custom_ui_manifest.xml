@@ -1,0 +1,9 @@
+<root>
+    <Panel>
+        <CustomUIElement type="GameSetup" layoutfile="file://{resources}/layout/custom_game/game_setup.xml" />
+        <CustomUIElement type="Hud" layoutfile="file://{resources}/layout/custom_game/background.xml" />
+        <CustomUIElement type="Hud" layoutfile="file://{resources}/layout/custom_game/dah.xml" />
+        <CustomUIElement id="flyout_scoreboard" type="FlyoutScoreboard" layoutfile="file://{resources}/layout/custom_game/scoreboard.xml" />
+        <CustomUIElement type="LoadingScreen" layoutfile="file://{resources}/layout/custom_game/custom_loading_screen.xml" />
+    </Panel>
+</root>

@@ -1,0 +1,19 @@
+"AddonInfo"
+{
+    "TeamCount"   "1"
+    "maps"        "basic"
+    "IsPlayable"  "1"
+    "basic"
+    {
+        "MaxPlayers"     "8"
+    }
+    "Default_Keys"
+    {
+        "01"
+        {
+            "Key"       "ENTER"
+            "Command"   "CustomGameSay"
+            "Name"      "Say"
+        }
+    }
+}

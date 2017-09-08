@@ -1,0 +1,61 @@
+.outer-container {
+    flow-children: right-wrap;
+    width: 1920px;
+    height: 1080px;
+}
+.controls-container {
+    width: 100%;
+    background-color: #2c4815;
+    height: 44px;
+}
+.inner-container {
+    width: 1840px;
+    height: 1036px;
+    flow-children: right;
+    background-color: #2c4815;
+}
+.right-edge {
+    width: 100%;
+    height: 1036px;
+    flow-children: down;
+    horizontal-align: right;
+}
+.piece-1 {
+    width: 100%;
+    height: 616px;
+    background-color: #2c4815;
+}
+.piece-2 {
+    width: 100%;
+    height: 60px;
+    background-color: transparent;
+}
+.piece-3 {
+    width: 100%;
+    height: 404px;
+    background-color: #2c4815;
+}
+
+#DashboardButton:hover {
+    opacity: 1;
+}
+#DashboardButton {
+    background-image: url("s2r://panorama/images/control_icons/return_to_game_png.vtex");
+    transform: scaleY(-1);
+    tooltip-position: bottom;
+    width: 30px;
+    height: 30px;
+    background-repeat: no-repeat;
+    background-size: 100%;
+    margin-top: 10px;
+    margin-bottom: 0px;
+    margin-left: 15px;
+    margin-right: 8px;
+    vertical-align: middle;
+    horizontal-align: left;
+    background-position: center;
+    opacity: 0.5;
+    wash-color: #CDF;
+    transition-property: opacity;
+    transition-duration: 0.2s;
+}

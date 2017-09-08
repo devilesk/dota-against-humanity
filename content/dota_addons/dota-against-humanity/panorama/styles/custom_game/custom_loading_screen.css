@@ -1,0 +1,19 @@
+.LoadingScreenContainer {
+    height: 100%;
+    width: 1120px;
+    flow-children: down;
+    padding: 50px;
+}
+.text-panel {
+    background-color: black;
+    opacity: .8;
+    color: white;
+    padding: 35px;
+}
+#DescriptionPanel {
+    margin-top: 35px;
+    font-size: 24px;
+}
+#AddonTitle {
+    font-size: 50;
+}
