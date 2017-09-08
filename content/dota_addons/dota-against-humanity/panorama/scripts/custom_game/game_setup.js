@@ -69,22 +69,11 @@ var rule_data = [
 ]
 
 var ruleLayout =
-    '<root>' +
-    '  <styles>' +
-    '		<include src="file://{resources}/styles/dotastyles.css" />' +
-    '    <include src="file://{resources}/styles/custom_game/game_setup.css" />' +
-    '  </styles>' +
-    '  <scripts>' +
-    '    <include src="file://{resources}/scripts/custom_game/game_setup_house_rule.js" />' +
-    '  </scripts>' +
-    '  <Panel class="block house-rules-block">' +
-    '      <{type} id="rule-input" group="{group}" class="rule-input" onactivate="">' +
-    '        <Label id="rule-header" class="rule-header" text="" />' +
-    '        <Label id="rule-description" class="rule-description" text="" />' +
-    '      </{type}>' +
-    '    <Panel id="vote-results-container" class="vote-results-container"></Panel>' +
-    '  </Panel>' +
-    '</root>';
+    '<{type} id="rule-input" group="{group}" class="rule-input" onactivate="">' +
+    '    <Label id="rule-header" class="rule-header" text="" />' +
+    '    <Label id="rule-description" class="rule-description" text="" />' +
+    '</{type}>' +
+    '<Panel id="vote-results-container" class="vote-results-container"></Panel>';
 
 var playerReadyPanels;
 var started = false;
@@ -112,15 +101,17 @@ function CreateHouseRulesPanels() {
             layout = layout.replace(/group="{group}"/g, "");
         }
         $.Msg(layout);
-        rulePanel.BLoadLayoutFromString(layout, false, false);
+        rulePanel.BCreateChildren(layout);
+        rulePanel.SetHasClass("block", true);
+        rulePanel.SetHasClass("house-rules-block", true);
         rulePanel.FindChildTraverse("rule-header").text = r.header;
         rulePanel.FindChildTraverse("rule-description").text = r.description;
-        var ruleInput = rulePanel.FindChild("rule-input");
+        var ruleInput = rulePanel.FindChildTraverse("rule-input");
         r.input = ruleInput;
         r.input.rule = r;
         r.panel = rulePanel;
         BindRuleInputActivate(ruleInput, r, rule_data);
-        ruleInput.votePlayers = CreatePlayerPanels(rulePanel.FindChild("vote-results-container"));
+        ruleInput.votePlayers = CreatePlayerPanels(rulePanel.FindChildTraverse("vote-results-container"));
     }
 }
 
@@ -254,11 +245,9 @@ function CreatePlayerPanels(parentPanel) {
             //$.Msg("player info", playerInfo);
         }
         var playerPanel = $.CreatePanel("Panel", parentPanel, "");
-        playerPanel.BLoadLayout("file://{resources}/layout/custom_game/game_setup_player.xml", false, false);
-        playerPanel.FindChild("PlayerAvatar").steamid = playerInfo.player_steamid;
-        //$.Msg("CreatePlayer", playerInfo);
-        playerPanel.SetAttributeInt("player_id", playerInfo.player_id);
-        playerPanel.SetHasClass("no_vote", true);
+        playerPanel.BLoadLayoutSnippet("game_setup_player");
+        InstantiatePlayerPanel(playerPanel, playerInfo);
+
         //$.Msg(playerInfo.player_steamid, playerPanel.FindChild("PlayerAvatar"));
         //$.Msg("player info", playerInfo);
         m_PlayerPanels.push(playerPanel);
