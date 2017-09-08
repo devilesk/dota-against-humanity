@@ -4,9 +4,9 @@ var m_ChatMessagePanels = [];
 var localPlayerId;
 var currentPlayerId;
 
-function InstantiateChatPanel(panel) {		
-    panel.FindChildTraverse("chat-input").SetPanelEvent("oninputsubmit", OnChatMessageEntered);		
-    panel.FindChildTraverse("chat-input-button").SetPanelEvent("onactivate", OnChatMessageEntered);		
+function InstantiateChatPanel(panel) {
+    panel.FindChildTraverse("chat-input").SetPanelEvent("oninputsubmit", OnChatMessageEntered);
+    panel.FindChildTraverse("chat-input-button").SetPanelEvent("onactivate", OnChatMessageEntered);
 }
 
 function CreateChatMessagePanel(message, playerID) {
@@ -49,16 +49,28 @@ function OnChatMessageEntered() {
     $("#chat-input").text = "";
 }
 
+function ParseMsg(msg) {
+    if (msg.l_message) {
+        return Object.keys(msg.l_message).sort().map(function (o) {
+            var s = msg.l_message[o];
+            return s.charAt(0) == "#" ? $.Localize(s) : s;
+        }).join("");
+    }
+    else {
+        return msg.message.charAt(0) == "#" ? $.Localize(msg.message) : msg.message;
+    }
+}
+
 function ReceiveChatMessage(msg) {
-    $.Msg('ReceiveChatMessage', msg, $('#chat-message-container'));
-    CreateChatMessagePanel(msg.message, parseInt(msg.playerId));
-    $('#chat-message-container').ScrollToBottom();
+    //$.Msg("ReceiveChatMessage", msg, $("#chat-message-container"));
+    CreateChatMessagePanel(ParseMsg(msg), parseInt(msg.playerId));
+    $("#chat-message-container").ScrollToBottom();
 }
 
 function ReceiveChatEvent(msg) {
-    $.Msg('ReceiveChatEvent', msg, $('#chat-message-container'));
-    CreateChatEventPanel(msg.message, parseInt(msg.playerId));
-    $('#chat-message-container').ScrollToBottom();
+    //$.Msg("ReceiveChatEvent", msg, $("#chat-message-container"));
+    CreateChatEventPanel(ParseMsg(msg), parseInt(msg.playerId));
+    $("#chat-message-container").ScrollToBottom();
 }
 
 function SetChatFocus() {
