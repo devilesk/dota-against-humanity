@@ -74,7 +74,7 @@ function ReceiveChatEvent(msg) {
 }
 
 function SetChatFocus() {
-    $('#chat-input').SetFocus();
+    $("#chat-input").SetFocus();
 }
 
 function OnChatBlur() {

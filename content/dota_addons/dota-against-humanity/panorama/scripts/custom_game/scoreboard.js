@@ -46,10 +46,10 @@ function CreatePlayerPanels() {
 }
 
 function UpdatePlayers(msg) {
-    $.Msg('UpdatePlayers', msg);
+    $.Msg("UpdatePlayers", msg);
 
     for (var i = 1; i <= 8; i++) {
-        $.Msg('UpdatePlayers', i);
+        $.Msg("UpdatePlayers", i);
         var playerPanel = m_PlayerPanels[i - 1];
         if (msg.players.hasOwnProperty(i.toString())) {
             var playerData = msg.players[i.toString()];

@@ -3,13 +3,13 @@ var m_ChatPanel;
 
 function SetTimer(msg) {
     //$.Msg( "SetTimer", msg );
-    $('#timer-value').text = msg.value;
-    $('#timer-label').text = $.Localize(msg.label);
+    $("#timer-value").text = msg.value;
+    $("#timer-label").text = $.Localize(msg.label);
 }
 
 function SetRoundWinnerMessage(msg) {
     $.Msg("SetRoundWinnerMessage", msg);
-    var msgPanel = $('#notification-label');
+    var msgPanel = $("#notification-label");
     if (msg.winner == "tie") {
         msgPanel.text = $.Localize("#vote_end_tie");
     } else if (parseInt(msg.winner) == -1) {
@@ -17,7 +17,7 @@ function SetRoundWinnerMessage(msg) {
     } else if (parseInt(msg.winner) == Players.GetLocalPlayer()) {
         msgPanel.text = $.Localize("#round_won_self");
     } else {
-        var playerName = msg.winner == GameUI.CustomUIConfig().RANDO_PLAYER_ID ? $.Localize("#rando_name") : Players.GetPlayerName(msg.winner)
+        var playerName = msg.winner == GameUI.CustomUIConfig().RANDO_PLAYER_ID ? $.Localize("#rando_name") : Players.GetPlayerName(msg.winner);
         msgPanel.text = playerName + $.Localize("#round_won_player");
     }
     msgPanel.SetHasClass("slide-in", true);
@@ -28,7 +28,7 @@ function SetRoundWinnerMessage(msg) {
 
 function SetNotificationMessage(msg) {
     $.Msg("SetNotificationMessage", msg);
-    var msgPanel = $('#notification-label');
+    var msgPanel = $("#notification-label");
     if (msg.player_id == -1) {
         msgPanel.text = "";
     } else if (parseInt(msg.player_id) == Players.GetLocalPlayer()) {
@@ -44,7 +44,7 @@ function SetNotificationMessage(msg) {
 
 function SetCzarMessage(msg) {
     $.Msg("SetCzarMessage", msg);
-    var msgPanel = $('#notification-label');
+    var msgPanel = $("#notification-label");
     if (parseInt(msg.czar) == -1) {
         msgPanel.text = "";
     } else if (parseInt(msg.czar) == Players.GetLocalPlayer()) {
@@ -60,8 +60,8 @@ function SetCzarMessage(msg) {
 
 function SetBlackMessage(msg) {
     //$.Msg( "SetBlackMessage", msg );
-    var msgPanel = $('#black-question');
-    msgPanel.text = msg.text
+    var msgPanel = $("#black-question");
+    msgPanel.text = msg.text;
     if (msg.transition) {
         msgPanel.SetHasClass("slide-in", true);
         $.Schedule(0.2, function() {
@@ -90,8 +90,8 @@ function SetWhiteCards(msg) {
             cardPanel.SetHasClass("pair", false);
         }
     }
-    $('#discard-all-button').visible = msg.discard_all == true;
-    $('#view-button').visible = msg.view == true;
+    $("#discard-all-button").visible = msg.discard_all == true;
+    $("#view-button").visible = msg.view == true;
 }
 
 function GetCardSelectionSlot(cardId, selectedCards) {
@@ -175,8 +175,8 @@ function OnDragStart(panelId, dragCallbacks) {
 }
 
 (function() {
-    $('#view-button').visible = false;
-    $('#discard-all-button').visible = false;
+    $("#view-button").visible = false;
+    $("#discard-all-button").visible = false;
 
     GameUI.SetDefaultUIEnabled(DotaDefaultUIElement_t.DOTA_DEFAULT_UI_TOP_TIMEOFDAY, false);
     GameUI.SetDefaultUIEnabled(DotaDefaultUIElement_t.DOTA_DEFAULT_UI_TOP_HEROES, false);
@@ -190,7 +190,7 @@ function OnDragStart(panelId, dragCallbacks) {
     Game.AddCommand("CustomGameSay", OnSayButtonPressed, "", 0);
     //Game.AddCommand( "-CustomGameScoreboard", OnScoreboardButtonPressed, "", 0 );
 
-    GameUI.CustomUIConfig().cardClickMode = 'select';
+    GameUI.CustomUIConfig().cardClickMode = "select";
 
     GameEvents.Subscribe("set_timer", SetTimer);
     GameEvents.Subscribe("set_black_message", SetBlackMessage);
