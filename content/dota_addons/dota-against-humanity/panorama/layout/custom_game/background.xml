@@ -11,7 +11,12 @@
             <Panel class="button-container" hittest="false">
                 <Button id="DashboardButton" hittest="false" />
                 <Button id="scoreboard-button" onactivate="OnScoreboardButtonPressed()">
-                    <Label id="scoreboard-button-label" text="#scoreboard_button_label" />
+                    <Panel id="scoreboard-button-label-wrapper">
+                        <Label id="scoreboard-button-label" text="#scoreboard_button_label" />
+                    </Panel>
+                    <Panel id="chat-button-label-wrapper">
+                        <Label id="chat-button-label" text="#chat_button_label" />
+                    </Panel>
                 </Button>
             </Panel>
         </Panel>

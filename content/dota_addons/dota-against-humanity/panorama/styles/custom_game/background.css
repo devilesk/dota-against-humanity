@@ -67,29 +67,37 @@
 }
 
 #scoreboard-button {
-    border: 1px solid #333;
-    background-color: gradient( linear, 0% 0%, 0% 100%, from( #333333), to( #444444));
     width: 100%;
     height: 40px;
-    margin-top: 2px;
+    margin-top: 4px;
     padding-top: 2px;
-    margin-left: 5px;
+    margin-left: 6px;
+    flow-children: right;
 }
-#scoreboard-button.active {
-    border: 1px solid #aaa;
-    padding-top: 1px;
+#scoreboard-button > Panel {
+    width: 50%;
+    height: 100%;
 }
-#scoreboard-button:hover {
-    border: 1px solid #aaa;
+#scoreboard-button > Panel > Label {
+    text-align: center;
+    width: 100%;
+    vertical-align: middle;
 }
-#scoreboard-button:active {}
-#scoreboard-button:hover > #scoreboard-button-label {}
-#scoreboard-button:active > #scoreboard-button-label {}
-#scoreboard-button.active > #scoreboard-button-label {
+#scoreboard-button.active #scoreboard-button-label-wrapper {
+    background-color: gradient( linear, 0% 0%, 0% 100%, from( #333333), to( #444444));
+}
+#scoreboard-button.active #scoreboard-button-label {
     font-weight: bold;
 }
-#scoreboard-button-label {
-    text-align: center;
-    vertical-align: middle;
-    width: 100%;
+#scoreboard-button #chat-button-label-wrapper {
+    background-color: gradient( linear, 0% 0%, 0% 100%, from( #333333), to( #444444));
+}
+#scoreboard-button.active #chat-button-label-wrapper {
+    background-color: transparent;
+}
+#chat-button-label {
+    font-weight: bold;
+}
+#scoreboard-button.active #chat-button-label {
+    font-weight: normal;
 }
