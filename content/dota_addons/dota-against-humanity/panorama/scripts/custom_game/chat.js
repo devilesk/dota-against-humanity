@@ -1,3 +1,5 @@
+/* exported InstantiateChatPanel */
+
 "use strict";
 
 var m_ChatMessagePanels = [];

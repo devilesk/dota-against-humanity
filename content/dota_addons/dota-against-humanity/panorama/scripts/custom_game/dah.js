@@ -1,3 +1,11 @@
+/* global InstantiateChatPanel */
+/* global InstantiateCardPanel */
+/* exported OnViewPressed */
+/* exported OnDiscardAllPressed */
+/* exported OnScoreboardButtonPressed */
+
+"use strict";
+
 var m_WhiteCardPanels = [];
 var m_ChatPanel;
 
@@ -163,15 +171,6 @@ function OnScoreboardButtonPressed() {
 
 function UpdateCards() {
 
-}
-
-function OnActivate() {
-    $.Msg("OnActivate");
-}
-
-
-function OnDragStart(panelId, dragCallbacks) {
-    $.Msg("DragStart");
 }
 
 (function() {

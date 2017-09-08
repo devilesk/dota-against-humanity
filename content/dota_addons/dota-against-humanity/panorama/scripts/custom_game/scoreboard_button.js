@@ -1,6 +1,6 @@
-"use strict";
+/* exported OnScoreboardButtonPressed */
 
-var Scoreboard;
+"use strict";
 
 function OnScoreboardButtonPressed() {
     GameUI.CustomUIConfig().Scoreboard.ToggleFlyoutScoreboardVisible();
@@ -8,13 +8,13 @@ function OnScoreboardButtonPressed() {
     $("#scoreboard-button").SetHasClass("active", GameUI.CustomUIConfig().bScoreboardVisible);
 }
 
-function UpdateButton() {
+/*function UpdateButton() {
     $.Msg("UpdateButton");
     var bVisible = GameUI.CustomUIConfig().Scoreboard.IsFlyoutScoreboardVisible();
 
     $("#scoreboard-button").SetHasClass("active", bVisible);
     $.Schedule(0.2, UpdateButton);
-}
+}*/
 
 (function() {
     //UpdateButton();

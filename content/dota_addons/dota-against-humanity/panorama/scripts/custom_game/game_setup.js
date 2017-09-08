@@ -1,3 +1,5 @@
+"use strict";
+
 var rule_data = [
     {
         id: "PACKING_HEAT",

@@ -1,3 +1,5 @@
+/* global InstantiatePlayerPanel */
+
 "use strict";
 
 var g_ScoreboardHandle = null;
@@ -28,9 +30,10 @@ function ToggleFlyoutScoreboardVisible() {
 function CreatePlayerPanels() {
     $.Msg("CreatePlayerPanels");
     var parentPanel = $("#players-container");
+    var playerPanel;
     for (var i = 1; i <= 8; i++) {
         $.Msg("CreatePlayerPanels", i);
-        var playerPanel = $.CreatePanel("Panel", parentPanel, "");
+        playerPanel = $.CreatePanel("Panel", parentPanel, "");
         playerPanel.BLoadLayoutSnippet("player-panel");
         InstantiatePlayerPanel(playerPanel);
         playerPanel.SetPlayerSlot(i - 1);
@@ -38,7 +41,7 @@ function CreatePlayerPanels() {
         m_PlayerPanels.push(playerPanel);
     }
 
-    var playerPanel = $.CreatePanel("Panel", parentPanel, "");
+    playerPanel = $.CreatePanel("Panel", parentPanel, "");
     playerPanel.BLoadLayoutSnippet("player-panel");
     InstantiatePlayerPanel(playerPanel);
     playerPanel.SetPlayerSlot(GameUI.CustomUIConfig().RANDO_PLAYER_ID);
@@ -48,11 +51,13 @@ function CreatePlayerPanels() {
 function UpdatePlayers(msg) {
     $.Msg("UpdatePlayers", msg);
 
+    var playerPanel;
+    var playerData;
     for (var i = 1; i <= 8; i++) {
         $.Msg("UpdatePlayers", i);
-        var playerPanel = m_PlayerPanels[i - 1];
+        playerPanel = m_PlayerPanels[i - 1];
         if (msg.players.hasOwnProperty(i.toString())) {
-            var playerData = msg.players[i.toString()];
+            playerData = msg.players[i.toString()];
             playerPanel.SetPlayerID(parseInt(playerData.id), Players.GetPlayerName(i - 1));
             playerPanel.SetPlayerPoints(playerData.points);
             playerPanel.SetPlayerVisible(true);
@@ -63,9 +68,9 @@ function UpdatePlayers(msg) {
         }
     }
 
-    var playerPanel = m_PlayerPanels[8];
+    playerPanel = m_PlayerPanels[8];
     if (msg.players.hasOwnProperty(GameUI.CustomUIConfig().RANDO_PLAYER_ID)) {
-        var playerData = msg.players[GameUI.CustomUIConfig().RANDO_PLAYER_ID];
+        playerData = msg.players[GameUI.CustomUIConfig().RANDO_PLAYER_ID];
         playerPanel.SetPlayerID(playerData.id, $.Localize("#rando_name"));
         playerPanel.SetPlayerPoints(playerData.points);
         playerPanel.SetPlayerVisible(true);

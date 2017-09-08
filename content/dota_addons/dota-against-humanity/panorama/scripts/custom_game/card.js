@@ -1,3 +1,5 @@
+/* exported InstantiateCardPanel */
+
 "use strict";
 
 function InstantiateCardPanel(cardPanel) {

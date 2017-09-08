@@ -1,3 +1,5 @@
+/* exported InstantiatePlayerPanel */
+
 "use strict";
 
 function InstantiatePlayerPanel(panel) {
