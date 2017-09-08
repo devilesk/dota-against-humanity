@@ -35,7 +35,8 @@ DAH = class({},    {
         REBOOTING_UNIVERSE  = "REBOOTING_UNIVERSE",
         EXECUTIVE_PRIVILEGE = "EXECUTIVE_PRIVILEGE",
         BETTER_LUCK         = "BETTER_LUCK",
-    }
+    },
+    RANDO_PLAYER_ID = "rando"
 })
 
 function DAH:constructor(HOUSE_RULES_STATE, players, data)
@@ -58,7 +59,7 @@ function DAH:constructor(HOUSE_RULES_STATE, players, data)
     self.current_black = nil
     self.time_remaining = -1
     self.timer = nil
-    self.timer_label = "Game Start In"
+    self.timer_label = "#game_start_in"
     self.card_votes = {}
 
     self.players = players
@@ -68,7 +69,7 @@ function DAH:constructor(HOUSE_RULES_STATE, players, data)
     self.czar = nil
     self.rando = nil
     if self:HasHouseRule(DAH.HOUSE_RULE.RANDO_CARDISSIAN) then
-        self.rando = PLAYER("rando")
+        self.rando = PLAYER(DAH.RANDO_PLAYER_ID)
     end
     --self:NextCzar()
 
@@ -174,7 +175,7 @@ function DAH:StateCardSelect()
     if self:HasHouseRule(DAH.HOUSE_RULE.SURVIVAL_FITTEST) then
         self:SetState(DAH.STATE.ELIM_SELECT)
         self:NextCzar()
-        self:SetNotificationMessageUI(self:GetCzarPlayer(), "turn to eliminate a card")
+        self:SetNotificationMessageUI(self:GetCzarPlayer(), "#turn_eliminate_card")
     else
         self:SetState(DAH.STATE.WINNER_SELECT)
     end
@@ -197,11 +198,11 @@ function DAH:StateCardSelect()
     self:Players():Each(function (player) self:ShowSelectedCardsToPlayer(player, false, -1) end)
  
     -- set timer label based on house rule
-    self.timer_label = "Czar Choosing"
+    self.timer_label = "#czar_choosing"
     if self:HasHouseRule(DAH.HOUSE_RULE.GOD_IS_DEAD) then
-        self.timer_label = "Winner Voting"
+        self.timer_label = "#winner_voting"
     elseif self:HasHouseRule(DAH.HOUSE_RULE.SURVIVAL_FITTEST) then
-        self.timer_label = "Elimination Voting"
+        self.timer_label = "#elimination_voting"
     end
 end
 
@@ -218,7 +219,7 @@ function DAH:StateElimSelect()
         self:GetCzarPlayer():SetCanSelect(false)
         self:NextCzar()
         self:GetCzarPlayer():SetCanSelect(true)
-        self:SetNotificationMessageUI(self:GetCzarPlayer(), "turn to eliminate a card")
+        self:SetNotificationMessageUI(self:GetCzarPlayer(), "#turn_eliminate_card")
     end
 end
 
@@ -259,7 +260,7 @@ function DAH:StateNextRound()
             self:SubmitPlayerSelection(self:Rando())
         end)
     end
-    self.timer_label = "Time Remaining"
+    self.timer_label = "#time_remaining"
 end
 
 function DAH:NextState()
@@ -301,7 +302,7 @@ function DAH:EndRound()
     end)
     self.selected_whites:Clear()
  
-    self.timer_label = "Next Round In"
+    self.timer_label = "#next_round_in"
 end
 
 function DAH:StartTimer(duration)
@@ -398,7 +399,7 @@ function DAH:Deal(player, deck, num_cards)
 end
 
 function DAH:GetPlayerById(id)
-    if id == "rando" then
+    if id == DAH.RANDO_PLAYER_ID then
         return self:Rando()
     end
     return self:Players():Find(function (player) return player:PlayerId() == id end)
@@ -452,7 +453,7 @@ function DAH:SetWinner(nPlayerID)
         if last_char == "." then
             answer = string.sub(answer, 1, string.len(answer) - 1)
         end
-        answer = '<span class="answer">' .. answer .. '</span>'
+        answer = "<span class='answer'>" .. answer .. "</span>"
         print("SetWinner selected card ", answer)
         if string.find(message, "__________") ~= nil then
             message = string.gsub(message, "__________", answer, 1)
@@ -512,7 +513,7 @@ function DAH:UpdateScoreboardUI()
         playerdata[k] = {id = player:PlayerId(), points = player:Points()}
     end
     if self:HasHouseRule(DAH.HOUSE_RULE.RANDO_CARDISSIAN) then
-        playerdata["rando"] = {id = "rando", points = self:Rando():Points()}
+        playerdata[DAH.RANDO_PLAYER_ID] = {id = DAH.RANDO_PLAYER_ID, points = self:Rando():Points()}
     end
     local czar_id = self:GetCzarPlayer() and self:GetCzarPlayer():PlayerId() or -1
     CustomGameEventManager:Send_ServerToAllClients("update_players_ui", {players=playerdata, czar=czar_id} )
@@ -537,7 +538,7 @@ function DAH:OnDiscardAllWhiteCard(playerID)
     if self:CanDiscardAll(player) then
         if self:HasHouseRule(DAH.HOUSE_RULE.BETTER_LUCK) then
             player:SetCanSelect(false)
-            local message = "%s traded in all their cards."
+            local message = "#player_discard_all"
             CustomGameEventManager:Send_ServerToAllClients("receive_chat_event", {message=message, playerId=playerID})
             
             while player:Size() > 0 do
@@ -556,12 +557,12 @@ function DAH:OnDiscardWhiteCard(playerID, cardID)
     DeepPrintTable(card)
     if card ~= nil and self:CanDiscard(player) and player:OwnsCard(card) then
         if self:HasHouseRule(DAH.HOUSE_RULE.NEVER_EVER) then
-            local message = "%s discarded " .. card:Data() .. ""
-            CustomGameEventManager:Send_ServerToAllClients("receive_chat_event", {message=message, playerId=playerID})
+            local l_message = {"#player_discarded", card:Data()}
+            CustomGameEventManager:Send_ServerToAllClients("receive_chat_event", {l_message=l_message, playerId=playerID})
         elseif self:HasHouseRule(DAH.HOUSE_RULE.REBOOTING_UNIVERSE) then
             player:RemovePoint()
             self:UpdateScoreboardUI()
-            local message = "%s spent an Awesome Point for a new card."
+            local message = "#player_spent_point"
             CustomGameEventManager:Send_ServerToAllClients("receive_chat_event", {message=message, playerId=playerID})
         elseif self:HasHouseRule(DAH.HOUSE_RULE.EXECUTIVE_PRIVILEGE) then
             

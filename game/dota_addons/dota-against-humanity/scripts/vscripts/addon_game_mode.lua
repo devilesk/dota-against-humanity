@@ -11,7 +11,7 @@ HOUSE_RULES_STATE = {}
 PLAYER_READY_STATE = {}
 STARTED = false
 DEBUG_FAKE_CLIENTS = true
-DEBUG_MAX_BOTS = 0
+DEBUG_MAX_BOTS = 3
 
 if GameMode == nil then
     GameMode = class({})

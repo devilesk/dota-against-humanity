@@ -3,22 +3,22 @@ var m_ChatPanel;
 
 function SetTimer(msg) {
     //$.Msg( "SetTimer", msg );
-    $('#timer-value').text = msg.value
-    $('#timer-label').text = msg.label
+    $('#timer-value').text = msg.value;
+    $('#timer-label').text = $.Localize(msg.label);
 }
 
 function SetRoundWinnerMessage(msg) {
     $.Msg("SetRoundWinnerMessage", msg);
     var msgPanel = $('#notification-label');
     if (msg.winner == "tie") {
-        msgPanel.text = "Voting ended in a tie. No winner this round!";
+        msgPanel.text = $.Localize("#vote_end_tie");
     } else if (parseInt(msg.winner) == -1) {
         msgPanel.text = "";
     } else if (parseInt(msg.winner) == Players.GetLocalPlayer()) {
-        msgPanel.text = "You won the round!";
+        msgPanel.text = $.Localize("#round_won_self");
     } else {
-        var playerName = msg.winner == "rando" ? "Rando Cardrissian" : Players.GetPlayerName(msg.winner)
-        msgPanel.text = playerName + " won the round!";
+        var playerName = msg.winner == GameUI.CustomUIConfig().RANDO_PLAYER_ID ? $.Localize("#rando_name") : Players.GetPlayerName(msg.winner)
+        msgPanel.text = playerName + $.Localize("#round_won_player");
     }
     msgPanel.SetHasClass("slide-in", true);
     $.Schedule(0.2, function() {
@@ -32,9 +32,9 @@ function SetNotificationMessage(msg) {
     if (msg.player_id == -1) {
         msgPanel.text = "";
     } else if (parseInt(msg.player_id) == Players.GetLocalPlayer()) {
-        msgPanel.text = "Your " + msg.text;
+        msgPanel.text = $.Localize("#your") + msg.text;
     } else {
-        msgPanel.text = Players.GetPlayerName(msg.player_id) + "'s " + msg.text;
+        msgPanel.text = Players.GetPlayerName(msg.player_id) + $.Localize("#possessive") + msg.text;
     }
     msgPanel.SetHasClass("slide-in", true);
     $.Schedule(0.2, function() {
@@ -48,9 +48,9 @@ function SetCzarMessage(msg) {
     if (parseInt(msg.czar) == -1) {
         msgPanel.text = "";
     } else if (parseInt(msg.czar) == Players.GetLocalPlayer()) {
-        msgPanel.text = "You are the czar";
+        msgPanel.text = $.Localize("#czar_is_self");
     } else {
-        msgPanel.text = Players.GetPlayerName(msg.czar) + " is the czar";
+        msgPanel.text = Players.GetPlayerName(msg.czar) + $.Localize("#czar_is_player");
     }
     msgPanel.SetHasClass("slide-in", true);
     $.Schedule(0.2, function() {

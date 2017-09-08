@@ -12,7 +12,7 @@ function InstantiatePlayerPanel(panel) {
         panel.visible = m_PlayerVisible;
         panel.FindChildTraverse('player-name').text = m_PlayerName;
         panel.FindChildTraverse('player-points').text = m_PlayerPoints;
-        panel.FindChildTraverse('player-czar').text = m_PlayerIsCzar ? 'CZAR' : '';
+        panel.FindChildTraverse('player-czar').text = m_PlayerIsCzar ? $.Localize("#czar_label") : "";
         $.Schedule(0.1, UpdatePlayer);
     }
 

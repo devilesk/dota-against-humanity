@@ -1,15 +1,11 @@
 var rule_data = [
     {
         id: "PACKING_HEAT",
-        type: "ToggleButton",
-        header: "Packing Heat",
-        description: "For Pick 2s, all players draw an extra card before playing the hand to open up more options."
+        type: "ToggleButton"
     },
     {
         id: "RANDO_CARDISSIAN",
-        type: "ToggleButton",
-        header: "Rando Cardissian",
-        description: "Every round, pick one random White Card from the pile and place it into play. This card belongs to an imaginary player named Rando Cardissian, and if he wins the game, all players go home in a state of everlasting shame."
+        type: "ToggleButton"
     },
     {
         type: "divider"
@@ -17,23 +13,17 @@ var rule_data = [
     {
         id: "COUP_DETAT",
         type: "RadioButton",
-        group: "round-winner-setting",
-        header: "Coup d'état",
-        description: "The player that wins the round becomes the next czar."
+        group: "round-winner-setting"
     },
     {
         id: "GOD_IS_DEAD",
         type: "RadioButton",
-        group: "round-winner-setting",
-        header: "God is Dead",
-        description: "Play without a Card Czar. Each player picks his or her favorite card each round. The card with the most votes wins the round."
+        group: "round-winner-setting"
     },
     {
         id: "SURVIVAL_FITTEST",
         type: "RadioButton",
-        group: "round-winner-setting",
-        header: "Survival of the Fittest",
-        description: "After everyone has answered the question, players take turns eliminating one card each. The last remaining card is declared the funniest."
+        group: "round-winner-setting"
     },
     {
         type: "divider"
@@ -41,30 +31,22 @@ var rule_data = [
     {
         id: "NEVER_EVER",
         type: "RadioButton",
-        group: "discard-setting",
-        header: "Never Have I Ever",
-        description: "At any time, players may discard cards that they don't understand, but they must confess their ignorance to the group and suffer the resulting humiliation."
+        group: "discard-setting"
     },
     {
         id: "REBOOTING_UNIVERSE",
         type: "RadioButton",
-        group: "discard-setting",
-        header: "Rebooting the Universe",
-        description: "At any time, players may trade in an Awesome Point to return as many White Cards as they'd like to the deck and draw back up to ten."
+        group: "discard-setting"
     },
     {
         id: "EXECUTIVE_PRIVILEGE",
         type: "RadioButton",
-        group: "discard-setting",
-        header: "Executive Privilege",
-        description: "While players are choosing which White Cards to play, the czar may discard as many of their White Cards as they'd like and draw back up to ten."
+        group: "discard-setting"
     },
     {
         id: "BETTER_LUCK",
         type: "RadioButton",
-        group: "discard-setting",
-        header: "Better Luck Next Time",
-        description: "Players can trade in all their White Cards, but skip their current turn."
+        group: "discard-setting"
     }
 ]
 
@@ -104,8 +86,8 @@ function CreateHouseRulesPanels() {
         rulePanel.BCreateChildren(layout);
         rulePanel.SetHasClass("block", true);
         rulePanel.SetHasClass("house-rules-block", true);
-        rulePanel.FindChildTraverse("rule-header").text = r.header;
-        rulePanel.FindChildTraverse("rule-description").text = r.description;
+        rulePanel.FindChildTraverse("rule-header").text = $.Localize("#house_rule_" + r.id);
+        rulePanel.FindChildTraverse("rule-description").text = $.Localize("#house_rule_" + r.id + "_description");
         var ruleInput = rulePanel.FindChildTraverse("rule-input");
         r.input = ruleInput;
         r.input.rule = r;
@@ -317,4 +299,6 @@ function OnDropDownChanged() {
         started = true;
         $("#ready-button").enabled = false;
     });
+    
+    GameUI.CustomUIConfig().RANDO_PLAYER_ID = "rando";
 })();

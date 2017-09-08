@@ -15,21 +15,21 @@
             <Panel class="chat-container" hittest="false">
                 <Panel id="chat-message-container" hittest="false" />
                 <Panel id="chat-input-container" hittest="false">
-                    <TextEntry id="chat-input" placeholder="Enter message..." />
+                    <TextEntry id="chat-input" placeholder="#chat_placeholder" />
                     <Button id="chat-input-button">
-                        <Label id="chat-input-button-label" text="Send" />
+                        <Label id="chat-input-button-label" text="#chat_send" />
                     </Button>
                 </Panel>
             </Panel>
         </snippet>
         <snippet name="card-panel">
             <Panel class="card-wrapper" hittest="false">
-                <Button id="card-button" class="card card-white" onactivate="OnCardPressed()">
+                <Button id="card-button" class="card card-white">
                     <Label id="card-text" text="" html="true" />
                     <Panel class="card-bottom" hittest="false">
                         <Label id="card-owner" class="card-owner" text="" hittest="false" />
                         <Label id="card-selection-number" class="card-selection-number" text="" hittest="false" />
-                        <Button id="card-discard" class="card-discard" onactivate="OnDiscardPressed()">
+                        <Button id="card-discard" class="card-discard">
                             <Label id="card-discard-label" class="card-discard-label" text="#discard_label" html="true" hittest="false" />
                         </Button>
                     </Panel>

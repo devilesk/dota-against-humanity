@@ -16,7 +16,7 @@ function InstantiateCardPanel(cardPanel) {
         cardPanel.FindChildTraverse('card-text').text = m_CardText;
         cardPanel.FindChildTraverse('card-selection-number').text = m_CardSelectionSlot > 0 ? m_CardSelectionSlot : "";
         cardPanel.FindChildTraverse('card-owner').visible = m_CardOwnerVisible;
-        cardPanel.FindChildTraverse('card-owner').text = m_CardOwner == "rando" ? "Rando Cardrissian" : Players.GetPlayerName(m_CardOwner);
+        cardPanel.FindChildTraverse('card-owner').text = m_CardOwner == GameUI.CustomUIConfig().RANDO_PLAYER_ID ? $.Localize("#rando_name") : Players.GetPlayerName(m_CardOwner);
         cardPanel.FindChildTraverse('card-discard').visible = m_CardCanDiscard;
         $.Schedule(0.1, UpdateCard);
     }

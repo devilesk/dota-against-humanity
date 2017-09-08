@@ -41,7 +41,7 @@ function CreatePlayerPanels() {
     var playerPanel = $.CreatePanel("Panel", parentPanel, "");
     playerPanel.BLoadLayoutSnippet("player-panel");
     InstantiatePlayerPanel(playerPanel);
-    playerPanel.SetPlayerSlot("rando");
+    playerPanel.SetPlayerSlot(GameUI.CustomUIConfig().RANDO_PLAYER_ID);
     m_PlayerPanels.push(playerPanel);
 }
 
@@ -64,9 +64,9 @@ function UpdatePlayers(msg) {
     }
 
     var playerPanel = m_PlayerPanels[8];
-    if (msg.players.hasOwnProperty("rando")) {
-        var playerData = msg.players["rando"];
-        playerPanel.SetPlayerID(playerData.id, "Rando Cardrissian");
+    if (msg.players.hasOwnProperty(GameUI.CustomUIConfig().RANDO_PLAYER_ID)) {
+        var playerData = msg.players[GameUI.CustomUIConfig().RANDO_PLAYER_ID];
+        playerPanel.SetPlayerID(playerData.id, $.Localize("#rando_name"));
         playerPanel.SetPlayerPoints(playerData.points);
         playerPanel.SetPlayerVisible(true);
         playerPanel.SetPlayerIsCzar(parseInt(msg.czar) == playerData.id);
