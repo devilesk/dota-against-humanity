@@ -2,10 +2,12 @@
     <styles>
         <include src="file://{resources}/styles/dotastyles.css" />
         <include src="file://{resources}/styles/custom_game/dah.css" />
+        <include src="file://{resources}/styles/custom_game/card.css" />
         <include src="file://{resources}/styles/custom_game/chat.css" />
     </styles>
     <scripts>
         <include src="file://{resources}/scripts/custom_game/chat.js" />
+        <include src="file://{resources}/scripts/custom_game/card.js" />
         <include src="file://{resources}/scripts/custom_game/dah.js" />
     </scripts>
     <snippets>
@@ -18,6 +20,20 @@
                         <Label id="chat-input-button-label" text="Send" />
                     </Button>
                 </Panel>
+            </Panel>
+        </snippet>
+        <snippet name="card-panel">
+            <Panel class="card-wrapper" hittest="false">
+                <Button id="card-button" class="card card-white" onactivate="OnCardPressed()">
+                    <Label id="card-text" text="" html="true" />
+                    <Panel class="card-bottom" hittest="false">
+                        <Label id="card-owner" class="card-owner" text="" hittest="false" />
+                        <Label id="card-selection-number" class="card-selection-number" text="" hittest="false" />
+                        <Button id="card-discard" class="card-discard" onactivate="OnDiscardPressed()">
+                            <Label id="card-discard-label" class="card-discard-label" text="#discard_label" html="true" hittest="false" />
+                        </Button>
+                    </Panel>
+                </Button>
             </Panel>
         </snippet>
     </snippets>

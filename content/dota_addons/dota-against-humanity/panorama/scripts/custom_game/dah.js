@@ -108,7 +108,8 @@ function CreateWhiteCardPanels() {
     var parentPanel = $("#white-card-container");
     for (var i = 1; i <= 21; i++) {
         var cardPanel = $.CreatePanel("Panel", parentPanel, "");
-        cardPanel.BLoadLayout("file://{resources}/layout/custom_game/card.xml", false, false);
+        cardPanel.BLoadLayoutSnippet("card-panel");
+        InstantiateCardPanel(cardPanel);
         if (i % 2 == 0) {
             cardPanel.SetHasClass("card-wrapper-right", true);
         } else {
