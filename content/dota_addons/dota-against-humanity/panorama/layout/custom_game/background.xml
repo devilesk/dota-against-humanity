@@ -2,7 +2,6 @@
     <styles>
         <include src="file://{resources}/styles/dotastyles.css" />
         <include src="file://{resources}/styles/custom_game/background.css" />
-        <include src="file://{resources}/styles/custom_game/scoreboard_button.css" />
     </styles>
     <scripts>
         <include src="file://{resources}/scripts/custom_game/scoreboard_button.js" />
