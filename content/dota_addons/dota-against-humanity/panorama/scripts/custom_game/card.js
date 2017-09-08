@@ -20,6 +20,7 @@ function InstantiateCardPanel(cardPanel) {
         cardPanel.FindChildTraverse("card-owner").visible = m_CardOwnerVisible;
         cardPanel.FindChildTraverse("card-owner").text = m_CardOwner == GameUI.CustomUIConfig().RANDO_PLAYER_ID ? $.Localize("#rando_name") : Players.GetPlayerName(m_CardOwner);
         cardPanel.FindChildTraverse("card-discard").visible = m_CardCanDiscard;
+        cardPanel.SetHasClass("selected", m_CardSelectionSlot > 0);
         $.Schedule(0.1, UpdateCard);
     }
 

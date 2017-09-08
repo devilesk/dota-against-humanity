@@ -2,27 +2,25 @@
     background-color: orange;
 }
 .card-wrapper {
-    margin: 1px;
+    margin-right: 15px;
+    margin-bottom: 15px;
 }
 .card-wrapper-right.pair {
-    border: 1px solid white;
-    border-left: 1px none white;
-    margin: 0px;
 }
 .card-wrapper-left.pair {
-    border: 1px solid white;
-    border-right: 0px none white;
-    margin: 0px;
+    margin-right: 0;
 }
 .card {
     border-radius: 5px;
     width: 210px;
     height: 230px;
     padding: 15px;
-    margin: 4px;
     opacity: 0.95;
     flow-children: down;
     box-shadow: #000 2px 2px 8px 0px;
+}
+.selected .card {
+    wash-color: #aaa;
 }
 .card:active {
     border: 1px solid black;
@@ -31,7 +29,7 @@
     opacity: 1;
 }
 .card-white {
-    background-color: gradient( linear, 0% 0%, 0% 100%, from( #fff ), to( #ddd ) );
+    background-color: gradient( linear, 0% 0%, 0% 100%, from( #fff ), to( #ccc ) );
 }
 .card Label {
     font-size: 18;

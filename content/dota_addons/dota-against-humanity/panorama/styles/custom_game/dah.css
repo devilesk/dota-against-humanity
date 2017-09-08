@@ -13,6 +13,7 @@
     height: 1036px;
     width: 1528px;
     flow-children: down;
+    padding: 20px;
 }
 .right-container {
     /*border: 1px solid green;*/
@@ -30,8 +31,6 @@
     height: 259px;
     width: 100%;
     flow-children: right;
-    padding-top: 10px;
-    margin-left: 10px;
 }
 .timer-container {
     /*border: 1px solid red;*/
@@ -41,7 +40,6 @@
     padding: 10px;
     background-color: black;
     //border-radius: 10px;
-    margin: 10px;
 }
 .timer-value {
     font-size: 120;
@@ -62,14 +60,12 @@
     margin-bottom: 10px;
 }
 .right-question-container {
-    /*border: 1px solid red;*/
-    
     height: 100%;
     width: 80%;
     background-color: black;
     //border-radius: 10px;
-    margin: 10px;
     flow-children: down;
+    margin-right: 20px;
 }
 .question-label.slide-in {
     transform: translatex( -1000px);
@@ -113,13 +109,11 @@
     height: 777px;
     width: 100%;
     flow-children: right-wrap;
-    padding: 10px;
-    margin: 10px;
     padding-top: 1px;
     margin-bottom: 20px;
     margin-right: 100px;
     /*background-color: black;*/
-    
+    margin-top: 20px;
     border-radius: 10px;
 }
 Label {
