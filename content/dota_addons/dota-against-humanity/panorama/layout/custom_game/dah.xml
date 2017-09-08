@@ -2,10 +2,10 @@
     <styles>
         <include src="file://{resources}/styles/dotastyles.css" />
         <include src="file://{resources}/styles/custom_game/dah.css" />
-        <include src="file://{resources}/styles/custom_game/chat/chat.css" />
+        <include src="file://{resources}/styles/custom_game/chat.css" />
     </styles>
     <scripts>
-        <include src="file://{resources}/scripts/custom_game/chat/chat.js" />
+        <include src="file://{resources}/scripts/custom_game/chat.js" />
         <include src="file://{resources}/scripts/custom_game/dah.js" />
     </scripts>
     <snippets>
