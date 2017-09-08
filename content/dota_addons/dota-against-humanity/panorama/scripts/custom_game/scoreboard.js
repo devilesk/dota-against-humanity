@@ -31,14 +31,16 @@ function CreatePlayerPanels() {
     for (var i = 1; i <= 8; i++) {
         $.Msg("CreatePlayerPanels", i);
         var playerPanel = $.CreatePanel("Panel", parentPanel, "");
-        playerPanel.BLoadLayout("file://{resources}/layout/custom_game/player.xml", false, false);
+        playerPanel.BLoadLayoutSnippet("player-panel");
+        InstantiatePlayerPanel(playerPanel);
         playerPanel.SetPlayerSlot(i - 1);
-
+        
         m_PlayerPanels.push(playerPanel);
     }
 
     var playerPanel = $.CreatePanel("Panel", parentPanel, "");
-    playerPanel.BLoadLayout("file://{resources}/layout/custom_game/player.xml", false, false);
+    playerPanel.BLoadLayoutSnippet("player-panel");
+    InstantiatePlayerPanel(playerPanel);
     playerPanel.SetPlayerSlot("rando");
     m_PlayerPanels.push(playerPanel);
 }
