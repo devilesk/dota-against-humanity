@@ -60,17 +60,25 @@ var ruleLayout =
     '<Panel id="vote-results-container" class="vote-results-container"></Panel>';
 
 var playerReadyPanels;
-var started = false;
-var playerIds = [];
-var teamId = 2;
-var localPlayerId;
+var finished = false;
 var currentPlayerId;
+
+function DeleteHouseRulesPanels() {
+    var parentPanel = $("#house-rules-container");
+    parentPanel.RemoveAndDeleteChildren();
+    for (var i = 0; i < rule_data.length; i++) {
+        var r = rule_data[i];
+        if (r.type == "divider") continue;
+        r.input = null;
+        r.panel = null;
+    }
+}
 
 function CreateHouseRulesPanels() {
     var parentPanel = $("#house-rules-container");
     for (var i = 0; i < rule_data.length; i++) {
         var r = rule_data[i];
-        $.Msg(r);
+        //$.Msg(r);
         var rulePanel = $.CreatePanel("Panel", parentPanel, "");
         //rulePanel.BLoadLayout( "file://{resources}/layout/custom_game/game_setup_rule_" + r.type +".xml", false, false );
         if (r.type == "divider") {
@@ -84,7 +92,7 @@ function CreateHouseRulesPanels() {
         } else {
             layout = layout.replace(/group="{group}"/g, "");
         }
-        $.Msg(layout);
+        //$.Msg(layout);
         rulePanel.BCreateChildren(layout);
         rulePanel.SetHasClass("block", true);
         rulePanel.SetHasClass("house-rules-block", true);
@@ -97,12 +105,13 @@ function CreateHouseRulesPanels() {
         BindRuleInputActivate(ruleInput, r, rule_data);
         ruleInput.votePlayers = CreatePlayerPanels(rulePanel.FindChildTraverse("vote-results-container"));
     }
+    LoadAllHouseRuleVoteState();
 }
 
 function BindRuleInputActivate(ruleInput, rule, rules) {
     ruleInput.SetPanelEvent("onactivate", function() {
         $.Msg("onactivate", ruleInput.IsSelected());
-        if (started) return;
+        if (finished) return;
         if (HasPlayerVote(ruleInput.votePlayers, currentPlayerId) && ruleInput.IsSelected()) ruleInput.checked = false;
         //$.Msg("ruleInput", ruleData);
         //$.Msg(ruleInput);
@@ -139,41 +148,63 @@ function BindRuleInputActivate(ruleInput, rule, rules) {
     });
 }
 
-function ReceivePlayerState(msg) {
-    $.Msg("ReceivePlayerState", msg);
-    currentPlayerId = parseInt(msg.player_id);
-    for (var i = 0; i < rule_data.length; i++) {
-        var rule = rule_data[i];
-        if (rule.type == "divider") continue;
-        $.Msg(rule.id, msg.state[rule.id]);
-        if (msg.state[rule.id] == undefined || msg.state[rule.id] == 0) {
-            SetPlayerVote(rule.input.votePlayers, parseInt(msg.player_id), false);
-            rule.input.checked = false;
-        } else {
-            SetPlayerVote(rule.input.votePlayers, parseInt(msg.player_id), true);
-            rule.input.checked = true;
-        }
-        /*if (rule.id == msg.rule_id) {
-          var ruleInput = rule.input;
-          SetPlayerVote(ruleInput.votePlayers, parseInt(msg.player_id), msg.selected);
-        }*/
-    }
-    $("#ready-button").checked = msg.is_ready;
-    OnReadyButtonPressed();
+function OnGameSetupNetTableChange(tableName, key, data) {
+    $.Msg( "Table ", tableName, " changed: '", key, "' = ", data );
+    if (tableName !== "game_setup") return;
+    if (key === "player_ready") LoadPlayerReadyState(data);
+    if (key === "finished") UpdateReadyButton(data);
 }
 
-function UpdatePlayerVote(msg) {
+function InitReadyButton() {
+    var data = CustomNetTables.GetTableValue("game_setup", "finished") || {value: false};
+    UpdateReadyButton(data);
+}
+
+function UpdateReadyButton(data) {
+    $.Msg("UpdateReadyButton", data);
+    $("#ready-button").enabled = !data.value;
+    finished = data.value;
+}
+
+function LoadPlayerReadyState(data) {
+    var playerIds = Game.GetPlayerIDsOnTeam(DOTATeam_t.DOTA_TEAM_GOODGUYS);
+    playerIds.forEach(function (playerId) {
+        SetPlayerVote(playerReadyPanels, playerId, !!data[playerId]);
+        if (playerId == currentPlayerId) $("#ready-button").checked = !!data[playerId];
+    });
+}
+
+function LoadAllPlayerReadyState() {
+    var data = CustomNetTables.GetTableValue("game_setup", "player_ready");
+    $.Msg("LoadAllPlayerReadyState", data);
+    if (data) LoadPlayerReadyState(data);
+}
+
+function OnHouseRulesNetTableChange(tableName, key, data) {
+    $.Msg( "Table ", tableName, " changed: '", key, "' = ", data );
+    if (tableName !== "game_setup_house_rules") return;
+    LoadHouseRuleVoteState(key, data);
+}
+
+function LoadHouseRuleVoteState(key, data) {
+    var playerIds = Game.GetPlayerIDsOnTeam(DOTATeam_t.DOTA_TEAM_GOODGUYS);
     for (var i = 0; i < rule_data.length; i++) {
         var rule = rule_data[i];
-        if (rule.id == msg.rule_id) {
-            var ruleInput = rule.input;
-            SetPlayerVote(ruleInput.votePlayers, parseInt(msg.player_id), msg.selected);
-        }
+        if (rule.type == "divider" || rule.id !== key) continue;
+        playerIds.forEach(function (playerId) {
+            SetPlayerVote(rule.input.votePlayers, parseInt(playerId), !!data[playerId]);
+            if (playerId == currentPlayerId) rule.input.checked = !!data[playerId];
+        });
     }
 }
 
-function UpdatePlayerReady(msg) {
-    SetPlayerVote(playerReadyPanels, msg.player_id, msg.is_ready);
+function LoadAllHouseRuleVoteState() {
+    var table = CustomNetTables.GetAllTableValues("game_setup_house_rules");
+    if (table) {
+        table.forEach(function (kv) {
+            LoadHouseRuleVoteState(kv.key, kv.value);
+        });
+    }
 }
 
 function TallyVotes(panels) {
@@ -187,8 +218,8 @@ function SetPlayerVote(panels, playerID, bVote) {
         var playerPanel = panels[i];
         var id = playerPanel.GetAttributeInt("player_id", -1);
         if (id == playerID) {
-            playerPanel.SetHasClass("no_vote", bVote == false);
-            playerPanel.SetHasClass("vote", bVote == true);
+            playerPanel.SetHasClass("no_vote", !bVote);
+            playerPanel.SetHasClass("vote", !!bVote);
         }
     }
 }
@@ -205,7 +236,7 @@ function HasPlayerVote(panels, playerID) {
 }
 
 function OnReadyButtonPressed() {
-    if (!started) {
+    if (!finished) {
         $.Msg("OnReadyButtonPressed", currentPlayerId, $("#ready-button").checked);
         SetPlayerVote(playerReadyPanels, currentPlayerId, $("#ready-button").checked);
         GameEvents.SendCustomGameEventToServer("game_setup_player_ready_state_change", {
@@ -217,7 +248,8 @@ function OnReadyButtonPressed() {
 
 function CreatePlayerPanels(parentPanel) {
     var m_PlayerPanels = [];
-    $.Msg("CreatePlayerPanels", parentPanel);
+    $.Msg("CreatePlayerPanels", playerIds, parentPanel);
+    var playerIds = Game.GetPlayerIDsOnTeam(DOTATeam_t.DOTA_TEAM_GOODGUYS);
     for (var i = 0; i < playerIds.length; ++i) {
         var playerId = playerIds[i];
         var playerInfo = Game.GetPlayerInfo(playerId);
@@ -257,50 +289,56 @@ function UpdateTimer() {
 }
 
 function OnDropDownChanged() {
-    //currentPlayerId = parseInt($('#player-debug').GetSelected().id.replace('entry', ''));
-    //$.Msg("switch player", currentPlayerId);
+    currentPlayerId = parseInt($('#player-debug').GetSelected().id.replace('entry', ''));
     var playerId = parseInt($('#player-debug').GetSelected().id.replace('entry', ''));
-    $.Msg("OnDropDownChanged ", playerId);
-    GameEvents.SendCustomGameEventToServer("game_setup_get_player_state", {
-        "local_player_id": localPlayerId,
-        "player_id": playerId
+    $.Msg("OnDropDownChanged", currentPlayerId);
+    LoadAllHouseRuleVoteState();
+    LoadAllPlayerReadyState();
+}
+
+function DebugInitDropdown() {
+    var parentPanel = $("#player-debug-container");
+    parentPanel.RemoveAndDeleteChildren();
+    var layout = '<DropDown id="player-debug">';
+    var playerIds = Game.GetPlayerIDsOnTeam(DOTATeam_t.DOTA_TEAM_GOODGUYS);
+    playerIds.forEach(function (playerId) {
+        layout += '<Label text="' + Players.GetPlayerName(playerId) + '" id="entry' + playerId + '" />'
     });
+    layout += '</DropDown>';
+    parentPanel.BCreateChildren(layout);
+    parentPanel.FindChildTraverse("player-debug").SetPanelEvent("oninputsubmit", OnDropDownChanged);
+}
+
+function OnTeamPlayerListChanged() {
+    $.Msg("OnTeamPlayerListChanged");
+    Update();
+}
+
+function Update() {
+    DeleteHouseRulesPanels();
+    CreateHouseRulesPanels();
+    $("#player-ready-container").RemoveAndDeleteChildren();
+    playerReadyPanels = CreatePlayerPanels($("#player-ready-container"));
+    LoadAllPlayerReadyState();
+    InitReadyButton();
+    DebugInitDropdown();
 }
 
 (function() {
 
-    localPlayerId = Players.GetLocalPlayer();
     currentPlayerId = Players.GetLocalPlayer();
 
-    $.Msg("localPlayerId", localPlayerId);
     $.Msg("currentPlayerId", currentPlayerId);
 
     UpdateTimer();
-    //CreatePlayerPanels($("#vote-container-1"));
-    var unassignedPlayers = Game.GetUnassignedPlayerIDs();
-    for (var i = 0; i < unassignedPlayers.length; ++i) {
-        var playerId = unassignedPlayers[i];
-        $.Msg("unassigned player id ", playerId);
-    }
+    
+    Update();
+    
 
-    var allTeamIDs = Game.GetAllTeamIDs();
-    for (var teamId of allTeamIDs) {
-        $.Msg("team id ", teamId);
-    }
-    playerIds = Game.GetPlayerIDsOnTeam(teamId);
-    for (var i = 0; i < playerIds.length; i++) {
-        $.Msg("player id ", playerIds[i]);
-    }
-    CreateHouseRulesPanels();
-    playerReadyPanels = CreatePlayerPanels($("#player-ready-container"));
-
-    GameEvents.Subscribe("receive_player_state", ReceivePlayerState);
-    GameEvents.Subscribe("update_player_vote", UpdatePlayerVote);
-    GameEvents.Subscribe("update_player_ready", UpdatePlayerReady);
-    GameEvents.Subscribe("all_players_ready", function() {
-        started = true;
-        $("#ready-button").enabled = false;
-    });
+    CustomNetTables.SubscribeNetTableListener("game_setup_house_rules", OnHouseRulesNetTableChange);
+    CustomNetTables.SubscribeNetTableListener("game_setup", OnGameSetupNetTableChange);
     
     GameUI.CustomUIConfig().RANDO_PLAYER_ID = "rando";
+    
+    $.RegisterForUnhandledEvent( "DOTAGame_TeamPlayerListChanged", OnTeamPlayerListChanged );
 })();

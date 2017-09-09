@@ -12,9 +12,7 @@
     <snippets>
         <snippet name="game_setup_player">
             <Panel class="TeamSelectPlayer">
-                <Panel id="test">
-                    <DOTAAvatarImage id="PlayerAvatar" />
-                </Panel>
+                <DOTAAvatarImage id="PlayerAvatar" />
             </Panel>
         </snippet>
     </snippets>
@@ -31,18 +29,9 @@
         </Panel>
         <Panel id="house-rules-description-container" class="block">
             <Label id="house-rules-description-label" text="#house_rules_description_label" />
-            <!--<DropDown id="player-debug" oninputsubmit="OnDropDownChanged()">
-        <Label text="Player 0" id="entry0"/>
-        <Label text="Player 1" id="entry1"/>
-        <Label text="Player 2" id="entry2"/>
-        <Label text="Player 3" id="entry3"/>
-        <Label text="Player 4" id="entry4"/>
-        <Label text="Player 5" id="entry5"/>
-        <Label text="Player 6" id="entry6"/>
-        <Label text="Player 7" id="entry7"/>
-      </DropDown>-->
+            <Panel id="player-debug-container" />
         </Panel>
-        <Panel id="house-rules-container" class=""></Panel>
+        <Panel id="house-rules-container" />
         <Panel id="ready-button-container" class="">
             <Panel id="ready-button-wrapper">
                 <ToggleButton id="ready-button" checked="true" text="" onactivate="OnReadyButtonPressed()">

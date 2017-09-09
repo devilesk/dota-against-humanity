@@ -3,25 +3,32 @@ require("libraries/util")
 require("libraries/list")
 require("libraries/timers")
 require("player")
+require("players")
 require("dah")
 
+PLAYERLIST = PLAYERS({})
 MAX_PLAYERS = 8
 HOUSE_RULES_VOTE_STATE = {}
 HOUSE_RULES_STATE = {}
-PLAYER_READY_STATE = {}
 STARTED = false
 DEBUG_FAKE_CLIENTS = true
-DEBUG_MAX_BOTS = 3
+DEBUG_MAX_BOTS = 1
 DEBUG_HOUSE_RULES_STATE = {
     -- [DAH.HOUSE_RULE.PACKING_HEAT]        = true,
     -- [DAH.HOUSE_RULE.RANDO_CARDISSIAN]    = true,
     -- [DAH.HOUSE_RULE.COUP_DETAT]          = true,
-    -- [DAH.HOUSE_RULE.GOD_IS_DEAD]         = true,
+    [DAH.HOUSE_RULE.GOD_IS_DEAD]         = true,
     -- [DAH.HOUSE_RULE.SURVIVAL_FITTEST]    = true,
     -- [DAH.HOUSE_RULE.NEVER_EVER]          = true,
     -- [DAH.HOUSE_RULE.REBOOTING_UNIVERSE]  = true,
     -- [DAH.HOUSE_RULE.EXECUTIVE_PRIVILEGE] = true,
     -- [DAH.HOUSE_RULE.BETTER_LUCK]         = true,
+}
+DEBUG_ROUND_TIME = {
+    -- CARD_SELECT   = 0.1,
+    -- WINNER_SELECT = 0.1,
+    -- ELIM_SELECT   = 0.1,
+    -- NEXT_ROUND    = 0.1,
 }
 
 if GameMode == nil then
@@ -41,7 +48,15 @@ function GameMode:OnConnectFull(keys)
     local playerID = ply:GetPlayerID()
     print("OnConnectFull", playerID)
     PrintTable(keys)
-    DumpPlayerConnectionState()
+    --DumpPlayerConnectionState()
+    
+    self:AddPlayer(playerID)
+end
+
+function GameMode:AddPlayer(playerID)
+    local is_bot = PlayerResource:IsFakeClient(playerID)
+    PLAYERLIST:Push(PLAYER(playerID, is_bot))
+    PlayerResource:SetCustomTeamAssignment(playerID, DOTA_TEAM_GOODGUYS)
 end
 
 function GameMode:OnDisconnect(keys)
@@ -88,60 +103,38 @@ function GameMode:OnGameRulesStateChange()
     print("OnGameRulesStateChange", nNewState)
     if nNewState == DOTA_GAMERULES_STATE_INIT then
         print("DOTA_GAMERULES_STATE_INIT")
-        --GameRules:SetCustomGameSetupTimeout( 5 )
-        --GameRules:SetCustomGameSetupRemainingTime( 5 )
     elseif nNewState == DOTA_GAMERULES_STATE_WAIT_FOR_PLAYERS_TO_LOAD then
         print("DOTA_GAMERULES_STATE_WAIT_FOR_PLAYERS_TO_LOAD")
     elseif nNewState == DOTA_GAMERULES_STATE_CUSTOM_GAME_SETUP then
         print("DOTA_GAMERULES_STATE_CUSTOM_GAME_SETUP")
-        --GameRules:EnableCustomGameSetupAutoLaunch( false )
-        --GameRules:FinishCustomGameSetup()
         if DEBUG_FAKE_CLIENTS then
             print("dota_create_fake_clients")
             SendToServerConsole( 'dota_create_fake_clients' )
             Timers:CreateTimer(1, function ()
                 print("dota_create_fake_clients timer")
                 DumpPlayerConnectionState()
-            end)
-        end
-        DumpPlayerConnectionState()
-
-        local num_bots = 0
-        for i = 0, MAX_PLAYERS-1 do
-            if PlayerResource:IsValidPlayerID(i) or (DEBUG_FAKE_CLIENTS and num_bots < DEBUG_MAX_BOTS) then
-                PLAYER_READY_STATE[i] = false
-                PlayerResource:SetCustomTeamAssignment(i, DOTA_TEAM_GOODGUYS)
-                if not PlayerResource:IsValidPlayerID(i) and DEBUG_FAKE_CLIENTS then
-                    num_bots = num_bots + 1
-                    OnGameSetupReadyStateChange(1, {player_id=i,is_ready=true})
+                
+                for i = 0, MAX_PLAYERS-1 do
+                    if PlayerResource:IsFakeClient(i) and PLAYERLIST:GetBotCount() < DEBUG_MAX_BOTS then
+                        self:AddPlayer(i)
+                        
+                        -- send ready event for bot player
+                        --OnGameSetupReadyStateChange(1, {player_id=i,is_ready=true})
+                    end
                 end
-            end
+            end)
+            
         end
-        print("PLAYER_READY_STATE")
-        PrintTable(PLAYER_READY_STATE)
+        -- DumpPlayerConnectionState()
     elseif nNewState == DOTA_GAMERULES_STATE_HERO_SELECTION then
         print("DOTA_GAMERULES_STATE_HERO_SELECTION")
-        DumpPlayerConnectionState()
+        -- DumpPlayerConnectionState()
     elseif nNewState == DOTA_GAMERULES_STATE_PRE_GAME then
         print("DOTA_GAMERULES_STATE_PRE_GAME")
-        DumpPlayerConnectionState()
-        local players = List({})
-        local num_bots = 0
-        for i = 0, MAX_PLAYERS-1 do
-            print("GetPlayer", i, PlayerResource:GetPlayer(i))
-            if PlayerResource:GetPlayer(i) then
-                print("IsFakeClient", i, PlayerResource:IsFakeClient(i))
-                if not PlayerResource:IsFakeClient(i) then
-                    print("pushing player", i)
-                    players:Push(PLAYER(i))
-                elseif DEBUG_FAKE_CLIENTS and num_bots < DEBUG_MAX_BOTS then
-                    players:Push(PLAYER(i))
-                    num_bots = num_bots + 1
-                end
-            end
-        end
-        --print("PLAYERS LIST")
-        --players:Dump()
+        -- DumpPlayerConnectionState()
+
+        print("PLAYERS LIST")
+        PLAYERLIST:Dump()
         
         print("DEBUG_HOUSE_RULES_STATE")
         for k,v in pairs(DEBUG_HOUSE_RULES_STATE) do
@@ -149,9 +142,20 @@ function GameMode:OnGameRulesStateChange()
             HOUSE_RULES_STATE[k] = v
         end
         
+        print("DEBUG_ROUND_TIME")
+        for k,v in pairs(DEBUG_ROUND_TIME) do
+            print(k, v)
+            DAH.TIME[k] = v
+        end
+        
+        
         local data = LoadKeyValues("scripts/kv/cards.kv")
-        GameRules.AddonTemplate.dah = DAH(HOUSE_RULES_STATE, players, data)
-        --DebugFuzzer(GameRules.AddonTemplate.dah)
+        GameRules.AddonTemplate.dah = DAH(HOUSE_RULES_STATE, PLAYERLIST, data)
+        -- DebugFuzzer(GameRules.AddonTemplate.dah)
+    elseif nNewState == DOTA_GAMERULES_STATE_GAME_IN_PROGRESS then
+        print("DOTA_GAMERULES_STATE_GAME_IN_PROGRESS")
+    elseif nNewState == DOTA_GAMERULES_STATE_POST_GAME then
+        print("DOTA_GAMERULES_STATE_POST_GAME")
     end
 end
 
@@ -161,7 +165,7 @@ function DebugFuzzer(dah)
         for k, player in dah:Players():Iter() do
             --print("IsFakeClient", player:PlayerId(), PlayerResource:IsFakeClient(player:PlayerId()))
             dah:OnSelectWhiteCard(player:PlayerId(), dah.white_index:GetRandom():Id())
-            if math.random(1000) <= 1000 then
+            if math.random(1000) <= 100 then
                 dah:OnDiscardWhiteCard(player:PlayerId(), dah.white_index:GetRandom():Id())
             end
             if math.random(1000) <= 100 then
@@ -170,11 +174,24 @@ function DebugFuzzer(dah)
             if math.random(1000) <= 100 then
                 dah:OnViewSelections(player:PlayerId())
             end
+            if math.random(1000) <= 100 then
+                if player:IsConnected() then
+                    DebugDisconnectBot(player:PlayerId())
+                elseif player:IsDisconnected() then
+                    DebugConnectBot(player:PlayerId())
+                end
+            end
             if PlayerResource:IsFakeClient(player:PlayerId()) then
                 --dah:OnSelectWhiteCard(player:PlayerId(), dah.white_index:GetRandom():Id())
             end
         end
         return 0.01
+    end)
+    
+    Timers:CreateTimer(10, function ()
+        print("timer DebugAbandonBot")
+        -- DebugAbandonBot(1)
+        return nil
     end)
 end
 
@@ -182,25 +199,6 @@ end
 function Activate()
     GameRules.AddonTemplate = GameMode()
     GameRules.AddonTemplate:InitGameMode()
-end
-
-function OnGameSetupGetPlayerState(eventSourceIndex, args)
-    print("OnGameSetupGetPlayerState")
-    local local_player_id = args['local_player_id']
-    local player_id = args['player_id']
-    local player = PlayerResource:GetPlayer(local_player_id)
-    local is_ready = PLAYER_READY_STATE[player_id]
-    local state = {}
-    print("HOUSE_RULES_VOTE_STATE")
-    PrintTable(HOUSE_RULES_VOTE_STATE)
-    print("state loop")
-    for k,v in pairs(HOUSE_RULES_VOTE_STATE) do
-        print(k, v)
-        state[k] = v[player_id]
-    end
-    print("state")
-    PrintTable(state)
-    CustomGameEventManager:Send_ServerToPlayer(player, "receive_player_state", {player_id=player_id, state=state, is_ready=is_ready} )
 end
 
 function OnGameSetupPlayerVoteChange(eventSourceIndex, args)
@@ -213,12 +211,7 @@ function OnGameSetupPlayerVoteChange(eventSourceIndex, args)
         HOUSE_RULES_VOTE_STATE[rule_id] = {}
     end
     HOUSE_RULES_VOTE_STATE[rule_id][player_id] = args['selected']
-    for i = 0, MAX_PLAYERS-1 do
-        local player = PlayerResource:GetPlayer(i)
-        if i ~= player_id and PlayerResource:IsValidPlayerID(i) then
-            CustomGameEventManager:Send_ServerToPlayer(player, "update_player_vote", {rule_id=rule_id, player_id=player_id, selected=args['selected']} )
-        end
-    end
+    CustomNetTables:SetTableValue("game_setup_house_rules", rule_id, HOUSE_RULES_VOTE_STATE[rule_id])
     PrintTable(HOUSE_RULES_VOTE_STATE)
 end
 
@@ -226,30 +219,21 @@ function OnGameSetupReadyStateChange(eventSourceIndex, args)
     if STARTED then return end
     print("OnGameSetupReadyStateChange")
     PrintTable(args)
-    local player_id = args['player_id']
-    PLAYER_READY_STATE[player_id] = args['is_ready']
-    for i = 0, MAX_PLAYERS-1 do
-        local player = PlayerResource:GetPlayer(i)
-        if i ~= player_id and PlayerResource:IsValidPlayerID(i) then
-            CustomGameEventManager:Send_ServerToPlayer(player, "update_player_ready", {player_id=player_id, is_ready=args['is_ready']} )
-        end
-    end
-
-    DumpPlayerConnectionState()
-    print("PLAYER_READY_STATE")
-    DeepPrintTable(PLAYER_READY_STATE)
+    PLAYERLIST:SetPlayerReady(args['player_id'], args['is_ready'])
         
-    for k,v in pairs(PLAYER_READY_STATE) do
-        if v == false or v == 0 then
-            return
+    if PLAYERLIST:IsConnectedSetupReady() then
+        print("all ready, starting")
+        GameRules:SetCustomGameSetupRemainingTime(5)
+        CustomNetTables:SetTableValue("game_setup", "finished", {value=true})
+        STARTED = true
+        TallyRules()
+    else
+        print("not ready")
+        for k, player in PLAYERLIST:Filter(function (player) return not player:IsSetupReady() and player:IsConnected() end):Iter() do
+            print("not ready", k, player:PlayerId())
         end
     end
 
-    print("all ready, starting")
-    GameRules:SetCustomGameSetupRemainingTime(5)
-    CustomGameEventManager:Send_ServerToAllClients("all_players_ready", {} )
-    STARTED = true
-    TallyRules()
 end
 
 function TallyRules()
@@ -261,8 +245,8 @@ function TallyRules()
             HOUSE_RULES_STATE[v] = false
         else
             PrintTable(HOUSE_RULES_VOTE_STATE[v])
-            print(count(function (a) return not a == 0 and not a == nil end, HOUSE_RULES_VOTE_STATE[v]), tablelength(PLAYER_READY_STATE))
-            HOUSE_RULES_STATE[v] = count(function (a) return not a == 0 and not a == nil end, HOUSE_RULES_VOTE_STATE[v]) > tablelength(PLAYER_READY_STATE) / 2
+            print(count(function (a) return not a == 0 and not a == nil end, HOUSE_RULES_VOTE_STATE[v]), PLAYERLIST:ConnectedPlayers():Size())
+            HOUSE_RULES_STATE[v] = count(function (a) return not a == 0 and not a == nil end, HOUSE_RULES_VOTE_STATE[v]) > PLAYERLIST:ConnectedPlayers():Size() / 2
         end
     end
     print("HOUSE_RULE_STATE")
@@ -271,9 +255,8 @@ end
 
 function GameMode:InitGameMode()
     print("Template addon is loaded.")
-    --GameRules:SetCustomGameSetupTimeout(5)
-    --GameRules:SetCustomGameSetupTimeout( 5 )
-    GameRules:SetCustomGameSetupAutoLaunchDelay(60)
+    GameRules:SetCustomGameSetupTimeout(5)
+    GameRules:SetCustomGameSetupAutoLaunchDelay(5)
     GameRules:GetGameModeEntity():SetAnnouncerDisabled(true)
 
     ListenToGameEvent("npc_spawned", Dynamic_Wrap(GameMode, "OnNPCSpawned"), self)
@@ -282,7 +265,6 @@ function GameMode:InitGameMode()
     ListenToGameEvent("player_reconnected", Dynamic_Wrap(GameMode, "OnPlayerReconnect"), self)
     ListenToGameEvent("game_rules_state_change", Dynamic_Wrap(GameMode, "OnGameRulesStateChange"), self)
 
-    CustomGameEventManager:RegisterListener( "game_setup_get_player_state", OnGameSetupGetPlayerState )
     CustomGameEventManager:RegisterListener( "game_setup_player_vote_change", OnGameSetupPlayerVoteChange )
     CustomGameEventManager:RegisterListener( "game_setup_player_ready_state_change", OnGameSetupReadyStateChange )
     CustomGameEventManager:RegisterListener( "select_white_card", OnSelectWhiteCard )
@@ -296,11 +278,40 @@ function GameMode:InitGameMode()
 
     GameRules:SetCustomGameTeamMaxPlayers(DOTA_TEAM_GOODGUYS, 8)
     GameRules:SetCustomGameTeamMaxPlayers(DOTA_TEAM_BADGUYS, 0)
-    DumpPlayerConnectionState()
+    -- DumpPlayerConnectionState()
 
     --GameRules:LockCustomGameSetupTeamAssignment( true )
 
     GameRules:GetGameModeEntity():SetThink( "OnSetTimeOfDayThink", self, "SetTimeOfDay", 2 )
+    
+    Timers:CreateTimer(GameMode.CheckPlayerConnectionState, self)
+end
+
+function GameMode:CheckPlayerConnectionState()
+    local state = GameRules:State_Get()
+    if state == DOTA_GAMERULES_STATE_PRE_GAME then
+        -- TODO
+    elseif state == DOTA_GAMERULES_STATE_GAME_IN_PROGRESS then
+        for k, player in PLAYERLIST:Iter() do
+            if player:IsConnectionStateChanged() then
+                print("player connection state changed", player:PlayerId())
+                if player:IsDisconnected() then
+                    print("player connection state disconnected", player:PlayerId())
+                    local dah = GameRules.AddonTemplate.dah
+                    dah:OnPlayerDisconnect(player)
+                end
+            end
+        end
+    end
+    return 1
+end
+
+function OnDisconnect(playerID)
+    print("OnDisconnect", playerID)
+end
+
+function OnAbandon(playerID)
+    print("OnAbandon", playerID)
 end
 
 function GameMode:OnSetTimeOfDayThink()
@@ -340,4 +351,19 @@ function OnViewSelections(eventSourceIndex, args)
     PrintTable(args)
     local dah = GameRules.AddonTemplate.dah
     dah:OnViewSelections(args['playerID'])
+end
+
+function DebugConnectBot(playerID)
+    print("DebugConnectBot")
+    PLAYERLIST:GetPlayer(playerID):SetBotConnectionState(DOTA_CONNECTION_STATE_CONNECTED)
+end
+
+function DebugDisconnectBot(playerID)
+    print("DebugDisconnectBot")
+    PLAYERLIST:GetPlayer(playerID):SetBotConnectionState(DOTA_CONNECTION_STATE_DISCONNECTED)
+end
+
+function DebugAbandonBot(playerID)
+    PLAYERLIST:GetPlayer(playerID):SetBotConnectionState(DOTA_CONNECTION_STATE_ABANDONED)
+    print("DebugAbandonBot", PLAYERLIST:GetPlayer(playerID):IsAbandoned())
 end

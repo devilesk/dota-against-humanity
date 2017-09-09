@@ -1,4 +1,15 @@
--- version 1.0.0
+-- version 1.1.0
+
+function toboolean(t)
+    if isnumber(t) then return t > 0 end
+	if istable(t) then return toboolean(#t) end
+	if isstring(t) then return t ~= "" end
+    return true
+end
+
+function isstring(t)
+    return type(t) == "string"
+end
 
 function istable(t)
     return type(t) == "table"

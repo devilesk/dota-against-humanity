@@ -3,13 +3,20 @@ require("deck")
 PLAYER = class({},
     {
     },
-    DECK)
+    DECK
+)
 
-function PLAYER:constructor(nPlayerID)
+function PLAYER:constructor(nPlayerID, is_bot)
     self.playerId = nPlayerID
     self.points = 0
     self.selected_cards = List({})
     self.can_select = false
+    self.is_bot = is_bot
+    self.bot_connection_state = DOTA_CONNECTION_STATE_CONNECTED
+    self.last_connection_state = self:ConnectionState()
+    self.setup_ready = false
+    self.voted_card = nil
+    self:NetworkPoints()
     DECK.constructor(self)
 end
 
@@ -21,16 +28,69 @@ function PLAYER:Handle()
     return PlayerResource:GetPlayer(self.playerId)
 end
 
+function PLAYER:IsBot()
+    return self.is_bot
+end
+
+function PLAYER:SetBotConnectionState(v)
+    self.bot_connection_state = v
+end
+
+function PLAYER:SetSetupReady(v)
+    self.setup_ready = toboolean(v)
+end
+
+function PLAYER:IsSetupReady()
+    return self.setup_ready
+end
+
+function PLAYER:IsConnected()
+    return self:ConnectionState() == DOTA_CONNECTION_STATE_CONNECTED
+end
+
+function PLAYER:IsDisconnected()
+    return self:ConnectionState() == DOTA_CONNECTION_STATE_DISCONNECTED
+end
+
+function PLAYER:IsAbandoned()
+    return self:ConnectionState() == DOTA_CONNECTION_STATE_ABANDONED
+end
+
+function PLAYER:ConnectionState()
+    if self.is_bot then
+        return self.bot_connection_state
+    else
+        return PlayerResource:GetConnectionState(self.playerId)
+    end
+end
+
+function PLAYER:IsConnectionStateChanged()
+    local state = self:ConnectionState()
+    if self.last_connection_state ~= state then
+        self.last_connection_state = state
+        self.bot_connection_state = state
+        return true
+    else
+        return false
+    end
+end
+
 function PLAYER:Points()
     return self.points
 end
 
 function PLAYER:AddPoint()
     self.points = self.points + 1
+    NetworkPoints()
 end
 
 function PLAYER:RemovePoint()
     self.points = self.points - 1
+    NetworkPoints()
+end
+
+function PLAYER:NetworkPoints()
+    CustomNetTables:SetTableValue("points", tostring(self:PlayerId()), {value=self:Points()})
 end
 
 function PLAYER:Insert(card, pos)
@@ -41,6 +101,22 @@ end
 function PLAYER:Remove(card)
     card:ClearOwner()
     return DECK.Remove(self, card)
+end
+
+function PLAYER:HasVoted()
+    return self.voted_card ~= nil
+end
+
+function PLAYER:GetVote()
+    return self.voted_card
+end
+
+function PLAYER:Vote(card)
+    self.voted_card = card
+end
+
+function PLAYER:Unvote()
+    self.voted_card = nil
 end
 
 function PLAYER:SetCanSelect(v)
