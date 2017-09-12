@@ -130,6 +130,7 @@ function DAH:CanView(player)
 end
 
 function DAH:HasCzar()
+    print("HasCzar", not self:HasHouseRule(DAH.HOUSE_RULE.GOD_IS_DEAD) and not self:HasHouseRule(DAH.HOUSE_RULE.SURVIVAL_FITTEST))
     return not self:HasHouseRule(DAH.HOUSE_RULE.GOD_IS_DEAD) and not self:HasHouseRule(DAH.HOUSE_RULE.SURVIVAL_FITTEST)
 end
 
@@ -348,6 +349,7 @@ function DAH:UpdateTimer()
 end
 
 function DAH:NextCzar()
+    print("NextCzar")
     if self:HasHouseRule(DAH.HOUSE_RULE.COUP_DETAT) and self.winner ~= nil and self.winner ~= self:Rando() then
         self.czar = self.winner:PlayerId()
     end
@@ -493,7 +495,7 @@ function DAH:SetWinner(nPlayerID)
         end
     end
     -- print("SetWinner final ", message)
-    NetworkBlackCard(message)
+    self:NetworkBlackCard(message)
     CustomGameEventManager:Send_ServerToAllClients("set_round_winner_message", {winner=player:PlayerId()} )
     for k, player in self:Players():Iter() do
         self:ShowSelectedCardsToPlayer(player, true, nPlayerID)

@@ -81,12 +81,12 @@ end
 
 function PLAYER:AddPoint()
     self.points = self.points + 1
-    NetworkPoints()
+    self:NetworkPoints()
 end
 
 function PLAYER:RemovePoint()
     self.points = self.points - 1
-    NetworkPoints()
+    self:NetworkPoints()
 end
 
 function PLAYER:NetworkPoints()
