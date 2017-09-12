@@ -9,10 +9,14 @@
 var m_WhiteCardPanels = [];
 var m_ChatPanel;
 
-function SetTimer(msg) {
-    //$.Msg( "SetTimer", msg );
-    $("#timer-value").text = msg.value;
-    $("#timer-label").text = $.Localize(msg.label);
+function SetTimer(data) {
+    //$.Msg( "SetTimer", data );
+    $("#timer-value").text = Math.round(data.value);
+}
+
+function SetTimerLabel(data) {
+    //$.Msg( "SetTimerLabel", data );
+    $("#timer-label").text = $.Localize(data.value);
 }
 
 function SetRoundWinnerMessage(msg) {
@@ -50,15 +54,15 @@ function SetNotificationMessage(msg) {
     });
 }
 
-function SetCzarMessage(msg) {
-    $.Msg("SetCzarMessage", msg);
+function SetCzarMessage(data) {
+    $.Msg("SetCzarMessage", data);
     var msgPanel = $("#notification-label");
-    if (parseInt(msg.czar) == -1) {
+    if (parseInt(data.value) == -1) {
         msgPanel.text = "";
-    } else if (parseInt(msg.czar) == Players.GetLocalPlayer()) {
+    } else if (parseInt(data.value) == Players.GetLocalPlayer()) {
         msgPanel.text = $.Localize("#czar_is_self");
     } else {
-        msgPanel.text = Players.GetPlayerName(msg.czar) + $.Localize("#czar_is_player");
+        msgPanel.text = Players.GetPlayerName(data.value) + $.Localize("#czar_is_player");
     }
     msgPanel.SetHasClass("slide-in", true);
     $.Schedule(0.2, function() {
@@ -66,16 +70,16 @@ function SetCzarMessage(msg) {
     });
 }
 
-function SetBlackMessage(msg) {
+function SetBlackMessage(data) {
     //$.Msg( "SetBlackMessage", msg );
-    var msgPanel = $("#black-question");
-    msgPanel.text = msg.text;
-    if (msg.transition) {
-        msgPanel.SetHasClass("slide-in", true);
-        $.Schedule(0.2, function() {
-            msgPanel.SetHasClass("slide-in", false);
-        });
-    }
+    var msgPanel = $("#black-question")
+    msgPanel.text = data.value;
+    // if (msg.transition) {
+    msgPanel.SetHasClass("slide-in", true);
+    $.Schedule(0.2, function() {
+        msgPanel.SetHasClass("slide-in", false);
+    });
+    // }
 }
 
 function SetWhiteCards(msg) {
@@ -114,6 +118,8 @@ function GetCardSelectionSlot(cardId, selectedCards) {
 
 function CreateWhiteCardPanels() {
     var parentPanel = $("#white-card-container");
+    parentPanel.RemoveAndDeleteChildren();
+    m_WhiteCardPanels.length = 0;
     for (var i = 1; i <= 21; i++) {
         var cardPanel = $.CreatePanel("Panel", parentPanel, "");
         cardPanel.BLoadLayoutSnippet("card-panel");
@@ -173,6 +179,24 @@ function UpdateCards() {
 
 }
 
+function OnGameNetTableChange(tableName, key, data) {
+    if (key !== "timer") $.Msg( "Table ", tableName, " changed: '", key, "' = ", data );
+    if (tableName !== "game") return;
+    if (key === "black_card") SetBlackMessage(data);
+    if (key === "timer") SetTimer(data);
+    if (key === "timer_label") SetTimerLabel(data);
+    if (key === "czar") SetCzarMessage(data);
+}
+
+function LoadAllGameState() {
+    var table = CustomNetTables.GetAllTableValues("game");
+    if (table) {
+        table.forEach(function (kv) {
+            OnGameNetTableChange("game", kv.key, kv.value);
+        });
+    }
+}
+
 (function() {
     $("#view-button").visible = false;
     $("#discard-all-button").visible = false;
@@ -190,11 +214,15 @@ function UpdateCards() {
     //Game.AddCommand( "-CustomGameScoreboard", OnScoreboardButtonPressed, "", 0 );
 
     GameUI.CustomUIConfig().cardClickMode = "select";
+    
+    CustomNetTables.SubscribeNetTableListener("game", OnGameNetTableChange);
 
-    GameEvents.Subscribe("set_timer", SetTimer);
-    GameEvents.Subscribe("set_black_message", SetBlackMessage);
+    LoadAllGameState();
+    
+    // GameEvents.Subscribe("set_timer", SetTimer);
+    // GameEvents.Subscribe("set_black_message", SetBlackMessage);
     GameEvents.Subscribe("set_round_winner_message", SetRoundWinnerMessage);
-    GameEvents.Subscribe("set_czar_message", SetCzarMessage);
+    // GameEvents.Subscribe("set_czar_message", SetCzarMessage);
     GameEvents.Subscribe("set_notification_message", SetNotificationMessage);
     GameEvents.Subscribe("set_white_cards", SetWhiteCards);
     CreateWhiteCardPanels();

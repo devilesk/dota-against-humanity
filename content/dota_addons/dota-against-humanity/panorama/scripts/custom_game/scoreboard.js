@@ -3,7 +3,7 @@
 "use strict";
 
 var g_ScoreboardHandle = null;
-var m_PlayerPanels = [];
+var m_PlayerPanels = {};
 
 function IsFlyoutScoreboardVisible() {
     return $.GetContextPanel().BHasClass("flyout_scoreboard_visible");
@@ -30,55 +30,72 @@ function ToggleFlyoutScoreboardVisible() {
 function CreatePlayerPanels() {
     $.Msg("CreatePlayerPanels");
     var parentPanel = $("#players-container");
+    parentPanel.RemoveAndDeleteChildren();
+    m_PlayerPanels = {};
     var playerPanel;
-    for (var i = 1; i <= 8; i++) {
+    for (var i = 0; i < 8; i++) {
         $.Msg("CreatePlayerPanels", i);
         playerPanel = $.CreatePanel("Panel", parentPanel, "");
         playerPanel.BLoadLayoutSnippet("player-panel");
-        InstantiatePlayerPanel(playerPanel);
-        playerPanel.SetPlayerSlot(i - 1);
-        
-        m_PlayerPanels.push(playerPanel);
+        playerPanel.visible = false;
+        m_PlayerPanels[i] = playerPanel;
     }
 
     playerPanel = $.CreatePanel("Panel", parentPanel, "");
     playerPanel.BLoadLayoutSnippet("player-panel");
-    InstantiatePlayerPanel(playerPanel);
-    playerPanel.SetPlayerSlot(GameUI.CustomUIConfig().RANDO_PLAYER_ID);
-    m_PlayerPanels.push(playerPanel);
+    playerPanel.visible = false;
+    m_PlayerPanels[GameUI.CustomUIConfig().RANDO_PLAYER_ID] = playerPanel;
 }
 
-function UpdatePlayers(msg) {
-    $.Msg("UpdatePlayers", msg);
-
-    var playerPanel;
-    var playerData;
-    for (var i = 1; i <= 8; i++) {
-        $.Msg("UpdatePlayers", i);
-        playerPanel = m_PlayerPanels[i - 1];
-        if (msg.players.hasOwnProperty(i.toString())) {
-            playerData = msg.players[i.toString()];
-            playerPanel.SetPlayerID(parseInt(playerData.id), Players.GetPlayerName(i - 1));
-            playerPanel.SetPlayerPoints(playerData.points);
-            playerPanel.SetPlayerVisible(true);
-            playerPanel.SetPlayerIsCzar(parseInt(msg.czar) == parseInt(playerData.id));
-            //$.Msg(Players.GetPlayerColor( i -1 ));
-        } else {
-            playerPanel.SetPlayerVisible(false);
-        }
+function UpdatePlayer(key, data) {
+    var playerId = key === GameUI.CustomUIConfig().RANDO_PLAYER_ID ? GameUI.CustomUIConfig().RANDO_PLAYER_ID : parseInt(key);
+    var playerPanel = m_PlayerPanels[playerId];
+    $.Msg("UpdatePlayer", playerPanel, playerId);
+    if (key === GameUI.CustomUIConfig().RANDO_PLAYER_ID) {
+        playerPanel.FindChildTraverse("player-name").text = $.Localize("#rando_name");
     }
-
-    playerPanel = m_PlayerPanels[8];
-    if (msg.players.hasOwnProperty(GameUI.CustomUIConfig().RANDO_PLAYER_ID)) {
-        playerData = msg.players[GameUI.CustomUIConfig().RANDO_PLAYER_ID];
-        playerPanel.SetPlayerID(playerData.id, $.Localize("#rando_name"));
-        playerPanel.SetPlayerPoints(playerData.points);
-        playerPanel.SetPlayerVisible(true);
-        playerPanel.SetPlayerIsCzar(parseInt(msg.czar) == playerData.id);
-        //$.Msg(Players.GetPlayerColor( i -1 ));
-    } else {
-        playerPanel.SetPlayerVisible(false);
+    else {
+        var playerId = parseInt(key);
+        var playerInfo = Game.GetPlayerInfo(playerId);
+        if (!playerInfo) return;
+        playerPanel.FindChildTraverse("player-name").text = Players.GetPlayerName(playerId);
     }
+    playerPanel.FindChildTraverse("player-points").text = data.value;
+    playerPanel.visible = true;
+        
+}
+
+function SetCzar(data) {
+    $.Msg("SetCzar", data);
+    for (var playerId in m_PlayerPanels) {
+        var playerPanel = m_PlayerPanels[playerId];
+        playerPanel.FindChildTraverse("player-czar").text = playerId == data.value ? $.Localize("#czar_label") : "";
+    }
+}
+
+function InitCzar() {
+    SetCzar(CustomNetTables.GetTableValue("game", "czar") || {value: null});
+}
+
+function OnPointsNetTableChange(tableName, key, data) {
+    $.Msg( "Table ", tableName, " changed: '", key, "' = ", data );
+    if (tableName !== "points") return;
+    UpdatePlayer(key, data);
+}
+
+function LoadAllPointsState() {
+    var table = CustomNetTables.GetAllTableValues("points");
+    if (table) {
+        table.forEach(function (kv) {
+            OnPointsNetTableChange("points", kv.key, kv.value);
+        });
+    }
+}
+
+function OnGameNetTableChange(tableName, key, data) {
+    if (key !== "timer") $.Msg( "Table ", tableName, " changed: '", key, "' = ", data );
+    if (tableName !== "game") return;
+    if (key === "czar") SetCzar(data);
 }
 
 (function() {
@@ -93,14 +110,17 @@ function UpdatePlayers(msg) {
     SetFlyoutScoreboardVisible(false);
     
     $.RegisterEventHandler("DOTACustomUI_SetFlyoutScoreboardVisible", $.GetContextPanel(), SetFlyoutScoreboardVisible);
-
-    GameEvents.Subscribe("update_players_ui", UpdatePlayers);
+    
+    CustomNetTables.SubscribeNetTableListener("points", OnPointsNetTableChange);
+    CustomNetTables.SubscribeNetTableListener("game", OnGameNetTableChange);
+    
+    CreatePlayerPanels();
+    LoadAllPointsState();
+    InitCzar();
     
     GameUI.CustomUIConfig().Scoreboard = {
         SetFlyoutScoreboardVisible: SetFlyoutScoreboardVisible,
         IsFlyoutScoreboardVisible: IsFlyoutScoreboardVisible,
         ToggleFlyoutScoreboardVisible: ToggleFlyoutScoreboardVisible
     };
-    
-    CreatePlayerPanels();
 })();

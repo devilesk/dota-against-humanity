@@ -5,7 +5,6 @@
         <include src="file://{resources}/styles/custom_game/player.css" />
     </styles>
     <scripts>
-        <include src="file://{resources}/scripts/custom_game/player.js" />
         <include src="file://{resources}/scripts/custom_game/scoreboard.js" />
     </scripts>
     <snippets>
