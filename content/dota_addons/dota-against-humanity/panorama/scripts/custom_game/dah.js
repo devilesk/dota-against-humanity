@@ -72,7 +72,7 @@ function SetCzarMessage(data) {
 
 function SetBlackMessage(data) {
     //$.Msg( "SetBlackMessage", msg );
-    var msgPanel = $("#black-question")
+    var msgPanel = $("#black-question");
     msgPanel.text = data.value;
     // if (msg.transition) {
     msgPanel.SetHasClass("slide-in", true);
@@ -129,7 +129,6 @@ function CreateWhiteCardPanels() {
         } else {
             cardPanel.SetHasClass("card-wrapper-left", true);
         }
-        cardPanel.SetCardSlot(i - 1);
         m_WhiteCardPanels.push(cardPanel);
     }
 }
@@ -140,16 +139,6 @@ function CreateChatPanel() {
     m_ChatPanel.BLoadLayoutSnippet("chat-panel");
     InstantiateChatPanel(m_ChatPanel);
 }
-/*
-function OnPlayPressed(id) {
-  $.Msg("OnPlayPressed", id);
-  if (!$('#' + id).BHasClass("active")) {
-    $("#select-button").ToggleClass("active");
-    $("#discard-button").ToggleClass("active");
-  }
-  GameUI.CustomUIConfig().cardClickMode = id.replace('-button', '');
-}
-*/
 
 function OnSayButtonPressed() {
     $.Msg("'ENTER' Released", m_ChatPanel);
@@ -216,15 +205,12 @@ function LoadAllGameState() {
     GameUI.CustomUIConfig().cardClickMode = "select";
     
     CustomNetTables.SubscribeNetTableListener("game", OnGameNetTableChange);
-
     LoadAllGameState();
     
-    // GameEvents.Subscribe("set_timer", SetTimer);
-    // GameEvents.Subscribe("set_black_message", SetBlackMessage);
     GameEvents.Subscribe("set_round_winner_message", SetRoundWinnerMessage);
-    // GameEvents.Subscribe("set_czar_message", SetCzarMessage);
     GameEvents.Subscribe("set_notification_message", SetNotificationMessage);
     GameEvents.Subscribe("set_white_cards", SetWhiteCards);
+    
     CreateWhiteCardPanels();
     CreateChatPanel();
     UpdateCards();

@@ -5,7 +5,6 @@
 function InstantiateCardPanel(cardPanel) {
     var m_Card = -1;
     var m_CardOwner = -1;
-    var m_CardSlot = -1;
     var m_CardSelectionSlot = 0;
     var m_CardVisible = false;
     var m_CardOwnerVisible = false;
@@ -26,7 +25,6 @@ function InstantiateCardPanel(cardPanel) {
 
     function OnCardPressed() {
         $.Msg("OnCardPressed", GameUI.CustomUIConfig().cardClickMode);
-        var selectedCardId = -1;
         GameEvents.SendCustomGameEventToServer("select_white_card", {
             "playerID": Players.GetLocalPlayer(),
             "card": m_Card
@@ -35,7 +33,6 @@ function InstantiateCardPanel(cardPanel) {
 
     function OnDiscardPressed() {
         $.Msg("OnDiscardPressed", GameUI.CustomUIConfig().cardClickMode);
-        var selectedCardId = -1;
         GameEvents.SendCustomGameEventToServer("discard_white_card", {
             "playerID": Players.GetLocalPlayer(),
             "card": m_Card
@@ -54,10 +51,6 @@ function InstantiateCardPanel(cardPanel) {
         m_CardCanDiscard = bCardDiscardVisible;
     }
 
-    function SetCardSlot(iCardSlot) {
-        m_CardSlot = iCardSlot;
-    }
-
     function SetCard(iCard, sCardText, iCardSelectionSlot, iCardOwner) {
         //$.Msg('SetCard', iCard, sCardText);
         m_Card = iCard;
@@ -73,7 +66,6 @@ function InstantiateCardPanel(cardPanel) {
     cardPanel.SetCardOwnerVisible = SetCardOwnerVisible;
     cardPanel.SetCardDiscardVisible = SetCardDiscardVisible;
     cardPanel.SetCard = SetCard;
-    cardPanel.SetCardSlot = SetCardSlot;
     
     UpdateCard(); // initial update of dynamic state
 }

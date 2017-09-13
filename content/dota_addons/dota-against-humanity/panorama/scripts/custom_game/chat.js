@@ -3,7 +3,6 @@
 "use strict";
 
 var m_ChatMessagePanels = [];
-var localPlayerId;
 var currentPlayerId;
 
 function InstantiateChatPanel(panel) {
@@ -79,18 +78,7 @@ function SetChatFocus() {
     $("#chat-input").SetFocus();
 }
 
-function OnChatBlur() {
-    $.Msg("OnChatBlur");
-    var root = $.GetContextPanel().GetParent().GetParent().GetParent();
-    root.hittest = true;
-    $.Schedule(2, function() {
-        $.Msg("hittest = false");
-        root.hittest = false;
-    });
-}
-
 (function() {
-    localPlayerId = Players.GetLocalPlayer();
     currentPlayerId = Players.GetLocalPlayer();
 
     GameEvents.Subscribe("receive_chat_message", ReceiveChatMessage);

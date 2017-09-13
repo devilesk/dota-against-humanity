@@ -1,8 +1,5 @@
-/* global InstantiatePlayerPanel */
-
 "use strict";
 
-var g_ScoreboardHandle = null;
 var m_PlayerPanels = {};
 
 function IsFlyoutScoreboardVisible() {
@@ -14,11 +11,6 @@ function SetFlyoutScoreboardVisible(bVisible) {
     //$.Msg('SetFlyoutScoreboardVisible');
     GameUI.CustomUIConfig().bScoreboardVisible = bVisible;
     GameUI.CustomUIConfig().ScoreboardButton.SetHasClass("active", GameUI.CustomUIConfig().bScoreboardVisible);
-    if (bVisible) {
-        //ScoreboardUpdater_SetScoreboardActive( g_ScoreboardHandle, true );
-    } else {
-        //ScoreboardUpdater_SetScoreboardActive( g_ScoreboardHandle, false );
-    }
 }
 
 function ToggleFlyoutScoreboardVisible() {
@@ -55,7 +47,6 @@ function UpdatePlayer(key, data) {
         playerPanel.FindChildTraverse("player-name").text = $.Localize("#rando_name");
     }
     else {
-        var playerId = parseInt(key);
         var playerInfo = Game.GetPlayerInfo(playerId);
         if (!playerInfo) return;
         playerPanel.FindChildTraverse("player-name").text = Players.GetPlayerName(playerId);
@@ -99,14 +90,6 @@ function OnGameNetTableChange(tableName, key, data) {
 }
 
 (function() {
-    //if ( ScoreboardUpdater_InitializeScoreboard === null ) { $.Msg( "WARNING: This file requires shared_scoreboard_updater.js to be included." ); }
-
-    var scoreboardConfig = {
-        "teamXmlName": "file://{resources}/layout/custom_game/multiteam_flyout_scoreboard_team.xml",
-        "playerXmlName": "file://{resources}/layout/custom_game/multiteam_flyout_scoreboard_player.xml",
-    };
-    //g_ScoreboardHandle = ScoreboardUpdater_InitializeScoreboard( scoreboardConfig, $( "#TeamsContainer" ) );
-
     SetFlyoutScoreboardVisible(false);
     
     $.RegisterEventHandler("DOTACustomUI_SetFlyoutScoreboardVisible", $.GetContextPanel(), SetFlyoutScoreboardVisible);

@@ -1,3 +1,5 @@
+/* global InstantiatePlayerPanel */
+
 "use strict";
 
 var rule_data = [
@@ -50,14 +52,14 @@ var rule_data = [
         type: "RadioButton",
         group: "discard-setting"
     }
-]
+];
 
 var ruleLayout =
-    '<{type} id="rule-input" group="{group}" class="rule-input" onactivate="">' +
-    '    <Label id="rule-header" class="rule-header" text="" />' +
-    '    <Label id="rule-description" class="rule-description" text="" />' +
-    '</{type}>' +
-    '<Panel id="vote-results-container" class="vote-results-container"></Panel>';
+    "<{type} id='rule-input' group='{group}' class='rule-input'>" +
+    "    <Label id='rule-header' class='rule-header' />" +
+    "    <Label id='rule-description' class='rule-description' />" +
+    "</{type}>" +
+    "<Panel id='vote-results-container' class='vote-results-container'></Panel>";
 
 var playerReadyPanels;
 var finished = false;
@@ -289,8 +291,7 @@ function UpdateTimer() {
 }
 
 function OnDropDownChanged() {
-    currentPlayerId = parseInt($('#player-debug').GetSelected().id.replace('entry', ''));
-    var playerId = parseInt($('#player-debug').GetSelected().id.replace('entry', ''));
+    currentPlayerId = parseInt($("#player-debug").GetSelected().id.replace("entry", ""));
     $.Msg("OnDropDownChanged", currentPlayerId);
     LoadAllHouseRuleVoteState();
     LoadAllPlayerReadyState();
@@ -299,12 +300,12 @@ function OnDropDownChanged() {
 function DebugInitDropdown() {
     var parentPanel = $("#player-debug-container");
     parentPanel.RemoveAndDeleteChildren();
-    var layout = '<DropDown id="player-debug">';
+    var layout = "<DropDown id='player-debug'>";
     var playerIds = Game.GetPlayerIDsOnTeam(DOTATeam_t.DOTA_TEAM_GOODGUYS);
     playerIds.forEach(function (playerId) {
-        layout += '<Label text="' + Players.GetPlayerName(playerId) + '" id="entry' + playerId + '" />'
+        layout += "<Label text='" + Players.GetPlayerName(playerId) + "' id='entry" + playerId + "' />";
     });
-    layout += '</DropDown>';
+    layout += "</DropDown>";
     parentPanel.BCreateChildren(layout);
     parentPanel.FindChildTraverse("player-debug").SetPanelEvent("oninputsubmit", OnDropDownChanged);
 }
