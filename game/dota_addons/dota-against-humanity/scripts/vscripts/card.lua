@@ -7,7 +7,7 @@ function CARD:constructor(id, data)
     self.selected = false
 end
 
-function CARD:Id()
+function CARD:ID()
     return self.id
 end
 
@@ -44,7 +44,7 @@ function CARD:Deselect()
 end
 
 function CARD:ToString()
-    return "id: " .. self:Id() .. ", owner: " .. self:Owner() .. ", selected: " .. tostring(self:IsSelected()) .. ", data: " .. self:Data()
+    return "id: " .. self:ID() .. ", owner: " .. self:Owner() .. ", selected: " .. tostring(self:IsSelected()) .. ", data: " .. self:Data()
 end
 
 BLACK_CARD = class({}, {}, CARD)

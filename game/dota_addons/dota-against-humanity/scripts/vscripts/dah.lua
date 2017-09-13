@@ -145,8 +145,8 @@ function DAH:HasHouseRule(rule)
     return self.house_rules[rule]
 end
 
-function DAH:GetWhiteById(id)
-    return self.white_index:Find(function (v) return v:Id() == id end)
+function DAH:GetWhiteCard(id)
+    return self.white_index:Find(function (v) return v:ID() == id end)
 end
 
 function DAH:GetHandSize()
@@ -163,8 +163,8 @@ function DAH:StateCardSelect()
         if not self:IsCzar(player) and player:CanSelect() then
             local t = List(player):Shuffle()
             for i = 1, self.current_black:Blanks() do
-                print("PLAYING RANDOM CARD FOR", player:PlayerId(), t:Get(i):ToString())
-                self:OnSelectWhiteCard(player:PlayerId(), t:Get(i):Id())
+                print("PLAYING RANDOM CARD FOR", player:ID(), t:Get(i):ToString())
+                self:OnSelectWhiteCard(player:ID(), t:Get(i):ID())
             end
         end
     end
@@ -283,7 +283,7 @@ function DAH:EndRound()
     self:RemoveAbandonedPlayers()
     
     for k, player in self:Players():Iter() do
-        self:ShowSelectedCardsToPlayer(player, true, self.winner and self.winner:PlayerId())
+        self:ShowSelectedCardsToPlayer(player, true, self.winner and self.winner:ID())
     end
     
     -- clear player selections
@@ -306,7 +306,7 @@ end
 
 function DAH:Discard(card)
     if card:HasOwner() then
-        self:GetPlayerById(card:Owner()):MovePush(card, self.white_discarded)
+        self:GetPlayer(card:Owner()):MovePush(card, self.white_discarded)
     else
         self.white_discarded:Push(card)
     end
@@ -346,13 +346,13 @@ end
 function DAH:NextCzar()
     print("NextCzar")
     if self:HasHouseRule(DAH.HOUSE_RULE.COUP_DETAT) and self.winner ~= nil and self.winner ~= self:Rando() then
-        self.czar = self.winner:PlayerId()
+        self.czar = self.winner:ID()
     end
     
     local czar_player = self:GetCzarPlayer()
     if czar_player == nil or not czar_player:IsConnected() then
         czar_player = self:ConnectedPlayers():GetRandom()
-        self.czar = czar_player:PlayerId()
+        self.czar = czar_player:ID()
     else
         local czar_index = self:Players():IndexOf(czar_player)
         for i = 1, self:Players():Size() do
@@ -360,7 +360,7 @@ function DAH:NextCzar()
             if new_czar == 0 then new_czar = self:Players():Size() end
             local new_czar_player = self:Players():Get(new_czar)
             if new_czar_player:IsConnected() then
-                self.czar = new_czar_player:PlayerId()
+                self.czar = new_czar_player:ID()
                 break
             end
         end
@@ -387,7 +387,7 @@ end
 
 function DAH:GetCzarPlayer()
     if self.czar == nil then return nil end
-    return self:GetPlayerById(self.czar)
+    return self:GetPlayer(self.czar)
 end
 
 function DAH:DealBlack()
@@ -428,7 +428,7 @@ function DAH:Deal(player, deck, num_cards)
     return num_cards
 end
 
-function DAH:GetPlayerById(id)
+function DAH:GetPlayer(id)
     if id == DAH.RANDO_PLAYER_ID then
         return self:Rando()
     end
@@ -436,7 +436,7 @@ function DAH:GetPlayerById(id)
 end
 
 function DAH:SubmitPlayerSelection(player)
-    -- print("SubmitPlayerSelection", player:PlayerId())
+    -- print("SubmitPlayerSelection", player:ID())
     -- DeepPrintTable(player:SelectedCards())
     self.selected_whites:PushList(player:SelectedCards())
     player:SetCanSelect(false)
@@ -465,9 +465,9 @@ function DAH:SubmitPlayerSelection(player)
     end
 end
 
-function DAH:SetWinner(nPlayerID)
-    print("SetWinner", nPlayerID)
-    local player = self:GetPlayerById(nPlayerID)
+function DAH:SetWinner(playerID)
+    print("SetWinner", playerID)
+    local player = self:GetPlayer(playerID)
     player:AddPoint()
     self.winner = player
     if player ~= self:Rando() then
@@ -491,27 +491,27 @@ function DAH:SetWinner(nPlayerID)
     end
     -- print("SetWinner final ", message)
     self:NetworkBlackCard(message)
-    CustomGameEventManager:Send_ServerToAllClients("set_round_winner_message", {winner=player:PlayerId()} )
+    CustomGameEventManager:Send_ServerToAllClients("set_round_winner_message", {winner=player:ID()} )
     for k, player in self:Players():Iter() do
-        self:ShowSelectedCardsToPlayer(player, true, nPlayerID)
+        self:ShowSelectedCardsToPlayer(player, true, playerID)
     end
 end
 
 function DAH:SetTie()
     CustomGameEventManager:Send_ServerToAllClients("set_round_winner_message", {winner="tie"} )
     for k, player in self:Players():Iter() do
-        self:ShowSelectedCardsToPlayer(player, true, nPlayerID)
+        self:ShowSelectedCardsToPlayer(player, true, -1)
     end
 end
 
 function DAH:ShowSelectedCardsToPlayer(player, bShowOwner, winner)
-    -- print("DAH:ShowSelectedCardsToPlayer", player:PlayerId(), bShowOwner, winner)
+    -- print("DAH:ShowSelectedCardsToPlayer", player:ID(), bShowOwner, winner)
     local pair = self.current_black:Blanks() == 2
     CustomGameEventManager:Send_ServerToPlayer(player:Handle(), "set_white_cards", {cards=self.selected_whites:Items(), selected_cards={}, pair=pair, show_owner=bShowOwner, winner=winner, discard=false} )
 end
 
 function DAH:UpdatePlayerUI(player)
-    -- print("DAH:UpdatePlayerUI", player:PlayerId())
+    -- print("DAH:UpdatePlayerUI", player:ID())
     CustomGameEventManager:Send_ServerToPlayer(player:Handle(), "set_white_cards",
         {
             cards = player:Items(),
@@ -525,13 +525,13 @@ function DAH:UpdatePlayerUI(player)
 end
 
 function DAH:SetNotificationMessageUI(player, text)
-    local player_id = player and player:PlayerId() or -1
+    local player_id = player and player:ID() or -1
     CustomGameEventManager:Send_ServerToAllClients("set_notification_message", {player_id=player_id, text=text} )
 end
 
 function DAH:OnViewSelections(playerID)
     -- print("DAH:OnViewSelections", playerID)
-    local player = self:GetPlayerById(playerID)
+    local player = self:GetPlayer(playerID)
     if self:CanView(player) then
         self:ShowSelectedCardsToPlayer(player, false, -1)
     end
@@ -539,7 +539,7 @@ end
 
 function DAH:OnDiscardAllWhiteCard(playerID)
     print("DAH:OnDiscardAllWhiteCard", playerID)
-    local player = self:GetPlayerById(playerID)
+    local player = self:GetPlayer(playerID)
     if self:CanDiscardAll(player) then
         if self:HasHouseRule(DAH.HOUSE_RULE.BETTER_LUCK) then
             player:SetCanSelect(false)
@@ -557,8 +557,8 @@ end
 
 function DAH:OnDiscardWhiteCard(playerID, cardID)
     print("DAH:OnDiscardWhiteCard", playerID, cardID)
-    local player = self:GetPlayerById(playerID)
-    local card = self:GetWhiteById(cardID)
+    local player = self:GetPlayer(playerID)
+    local card = self:GetWhiteCard(cardID)
     -- DeepPrintTable(card)
     if card ~= nil and self:CanDiscard(player) and player:OwnsCard(card) then
         if self:HasHouseRule(DAH.HOUSE_RULE.NEVER_EVER) then
@@ -580,8 +580,8 @@ end
 
 function DAH:OnSelectWhiteCard(playerID, cardID)
     -- print("DAH:OnSelectWhiteCard", playerID, cardID, self.state)
-    local player = self:GetPlayerById(playerID)
-    local card = self:GetWhiteById(cardID)
+    local player = self:GetPlayer(playerID)
+    local card = self:GetWhiteCard(cardID)
     -- DeepPrintTable(card)
     if card ~= nil and card:HasOwner() and player:CanSelect() then
         if self:IsState(DAH.STATE.CARD_SELECT) then
@@ -599,7 +599,7 @@ function DAH:OnSelectWhiteCard(playerID, cardID)
             if self:HasHouseRule(DAH.HOUSE_RULE.SURVIVAL_FITTEST) then
                 if self:IsCzar(player) then
                     if self.selected_whites:Size() > 1 then
-                        local card_owner = self:GetPlayerById(card:Owner())
+                        local card_owner = self:GetPlayer(card:Owner())
                         card_owner:Remove(card)
                         self.selected_whites:Remove(card)
                         self.white_discarded:Push(card)
@@ -630,7 +630,7 @@ function DAH:GodIsDeadVoteTally()
     if self:ConnectedPlayers():Count(function (player) return not player:HasVoted() end) == 0 then
         local card_votes = {}
         self:ConnectedPlayers():Each(function (player)
-            local card_id = player:GetVote():Id()
+            local card_id = player:GetVote():ID()
             card_votes[card_id] = (card_votes[card_id] or 0) + 1
         end)
         local max_votes = 0
@@ -651,7 +651,7 @@ function DAH:GodIsDeadVoteTally()
             end
         end
         if not tie then
-            local winning_card = self:GetWhiteById(max_card_id)
+            local winning_card = self:GetWhiteCard(max_card_id)
             self:SetWinner(winning_card:Owner())
         else
             self:SetTie()
@@ -661,7 +661,7 @@ function DAH:GodIsDeadVoteTally()
 end
 
 function DAH:OnPlayerDisconnect(player)
-    print("OnPlayerDisconnect", player:PlayerId())
+    print("OnPlayerDisconnect", player:ID())
     if self:IsState(DAH.STATE.WINNER_SELECT) then
         player:SetCanSelect(false)
         if self:HasCzar() then
@@ -676,7 +676,7 @@ end
 
 function DAH:RemoveAbandonedPlayers()
     for k, player in self:Players():AbandonedPlayers():Iter() do
-        print("RemoveAbandonedPlayers", player:PlayerId())
+        print("RemoveAbandonedPlayers", player:ID())
         player:ClearSelection()
         while player:Size() > 0 do
             player:MovePush(player:Peek(), self.white_discarded)
@@ -691,24 +691,24 @@ function DAH:Debug()
         print("-----------")
         print("Debug START")
         for k, player in self:Players():Iter() do
-            print("IsFakeClient", player:PlayerId(), PlayerResource:IsFakeClient(player:PlayerId()))
-            print("IsDisconnected", player:PlayerId(), player:IsDisconnected())
-            print("IsAbandoned", player:PlayerId(), player:IsAbandoned())
-            if PlayerResource:IsFakeClient(player:PlayerId()) then
+            print("IsFakeClient", player:ID(), PlayerResource:IsFakeClient(player:ID()))
+            print("IsDisconnected", player:ID(), player:IsDisconnected())
+            print("IsAbandoned", player:ID(), player:IsAbandoned())
+            if PlayerResource:IsFakeClient(player:ID()) then
                 if self:IsState(DAH.STATE.CARD_SELECT) then
-                    print("bot pick white", player:PlayerId(), self.state)
+                    print("bot pick white", player:ID(), self.state)
                     if not self:IsCzar(player) then
                         if self.current_black:Blanks() == 2 then
-                            self:OnSelectWhiteCard(player:PlayerId(), player:Last():Id())
+                            self:OnSelectWhiteCard(player:ID(), player:Last():ID())
                         end
-                        self:OnSelectWhiteCard(player:PlayerId(), player:Peek():Id())
+                        self:OnSelectWhiteCard(player:ID(), player:Peek():ID())
                     end
                 elseif self:IsState(DAH.STATE.WINNER_SELECT) then
                     if self:IsCzar(player) then
-                        print("bot czar pick black", player:PlayerId(), self.state)
-                        local randcard = self.selected_whites:GetRandom()
-                        randcard = self.selected_whites:Last()
-                        self:OnSelectWhiteCard(player:PlayerId(), randcard:Id())
+                        print("bot czar pick black", player:ID(), self.state)
+                        local rand_card = self.selected_whites:GetRandom()
+                        -- rand_card = self.selected_whites:Last()
+                        self:OnSelectWhiteCard(player:ID(), rand_card:ID())
                     end
                 end
             end

@@ -163,26 +163,26 @@ function DebugFuzzer(dah)
     print("DebugFuzzer")
     Timers:CreateTimer(1, function ()
         for k, player in dah:Players():Iter() do
-            --print("IsFakeClient", player:PlayerId(), PlayerResource:IsFakeClient(player:PlayerId()))
-            dah:OnSelectWhiteCard(player:PlayerId(), dah.white_index:GetRandom():Id())
+            --print("IsFakeClient", player:ID(), PlayerResource:IsFakeClient(player:ID()))
+            dah:OnSelectWhiteCard(player:ID(), dah.white_index:GetRandom():ID())
             if math.random(1000) <= 100 then
-                dah:OnDiscardWhiteCard(player:PlayerId(), dah.white_index:GetRandom():Id())
+                dah:OnDiscardWhiteCard(player:ID(), dah.white_index:GetRandom():ID())
             end
             if math.random(1000) <= 100 then
-                dah:OnDiscardAllWhiteCard(player:PlayerId())
+                dah:OnDiscardAllWhiteCard(player:ID())
             end
             if math.random(1000) <= 100 then
-                dah:OnViewSelections(player:PlayerId())
+                dah:OnViewSelections(player:ID())
             end
             if math.random(1000) <= 100 then
                 if player:IsConnected() then
-                    DebugDisconnectBot(player:PlayerId())
+                    DebugDisconnectBot(player:ID())
                 elseif player:IsDisconnected() then
-                    DebugConnectBot(player:PlayerId())
+                    DebugConnectBot(player:ID())
                 end
             end
-            if PlayerResource:IsFakeClient(player:PlayerId()) then
-                --dah:OnSelectWhiteCard(player:PlayerId(), dah.white_index:GetRandom():Id())
+            if PlayerResource:IsFakeClient(player:ID()) then
+                --dah:OnSelectWhiteCard(player:ID(), dah.white_index:GetRandom():ID())
             end
         end
         return 0.01
@@ -230,7 +230,7 @@ function OnGameSetupReadyStateChange(eventSourceIndex, args)
     else
         print("not ready")
         for k, player in PLAYERLIST:Filter(function (player) return not player:IsSetupReady() and player:IsConnected() end):Iter() do
-            print("not ready", k, player:PlayerId())
+            print("not ready", k, player:ID())
         end
     end
 
@@ -294,9 +294,9 @@ function GameMode:CheckPlayerConnectionState()
     elseif state == DOTA_GAMERULES_STATE_GAME_IN_PROGRESS then
         for k, player in PLAYERLIST:Iter() do
             if player:IsConnectionStateChanged() then
-                print("player connection state changed", player:PlayerId())
+                print("player connection state changed", player:ID())
                 if player:IsDisconnected() then
-                    print("player connection state disconnected", player:PlayerId())
+                    print("player connection state disconnected", player:ID())
                     local dah = GameRules.AddonTemplate.dah
                     dah:OnPlayerDisconnect(player)
                 end

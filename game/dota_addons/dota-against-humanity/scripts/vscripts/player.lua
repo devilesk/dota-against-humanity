@@ -6,8 +6,8 @@ PLAYER = class({},
     DECK
 )
 
-function PLAYER:constructor(nPlayerID, is_bot)
-    self.playerId = nPlayerID
+function PLAYER:constructor(playerID, is_bot)
+    self.id = playerID
     self.points = 0
     self.selected_cards = List({})
     self.can_select = false
@@ -20,12 +20,12 @@ function PLAYER:constructor(nPlayerID, is_bot)
     DECK.constructor(self)
 end
 
-function PLAYER:PlayerId()
-    return self.playerId
+function PLAYER:ID()
+    return self.id
 end
 
 function PLAYER:Handle()
-    return PlayerResource:GetPlayer(self.playerId)
+    return PlayerResource:GetPlayer(self:ID())
 end
 
 function PLAYER:IsBot()
@@ -60,7 +60,7 @@ function PLAYER:ConnectionState()
     if self.is_bot then
         return self.bot_connection_state
     else
-        return PlayerResource:GetConnectionState(self.playerId)
+        return PlayerResource:GetConnectionState(self:ID())
     end
 end
 
@@ -90,11 +90,11 @@ function PLAYER:RemovePoint()
 end
 
 function PLAYER:NetworkPoints()
-    CustomNetTables:SetTableValue("points", tostring(self:PlayerId()), {value=self:Points()})
+    CustomNetTables:SetTableValue("points", tostring(self:ID()), {value=self:Points()})
 end
 
 function PLAYER:Insert(card, pos)
-    card:SetOwner(self:PlayerId())
+    card:SetOwner(self:ID())
     DECK.Insert(self, card, pos)
 end
 
@@ -166,11 +166,11 @@ function PLAYER:SelectedCards()
 end
 
 function PLAYER:OwnsCard(card)
-    return self:PlayerId() == card:Owner()
+    return self:ID() == card:Owner()
 end
 
 function PLAYER:ToString()
-    return "playerId: " .. self:PlayerId() .. ", points: " .. self:Points() .. ", can_select: " .. tostring(self:CanSelect())
+    return "playerID: " .. self:ID() .. ", points: " .. self:Points() .. ", can_select: " .. tostring(self:CanSelect())
 end
 
 function PLAYER:Dump()

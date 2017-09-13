@@ -13,7 +13,7 @@ function PLAYERS:GetBotCount()
 end
 
 function PLAYERS:GetPlayer(playerID)
-    return self:Find(function (player) return player:PlayerId() == playerID end)
+    return self:Find(function (player) return player:ID() == playerID end)
 end
 
 function PLAYERS:IsConnectedSetupReady()
@@ -34,7 +34,7 @@ function PLAYERS:SetPlayerReady(playerID, v)
         player:SetSetupReady(v)
         local PLAYER_READY_STATE = {}
         self:Each(function (p)
-            PLAYER_READY_STATE[p:PlayerId()] = p:IsSetupReady()
+            PLAYER_READY_STATE[p:ID()] = p:IsSetupReady()
         end)
         CustomNetTables:SetTableValue("game_setup", "player_ready", PLAYER_READY_STATE)
     end
