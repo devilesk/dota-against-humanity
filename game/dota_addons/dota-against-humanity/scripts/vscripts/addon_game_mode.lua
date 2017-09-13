@@ -245,8 +245,8 @@ function TallyRules()
             HOUSE_RULES_STATE[v] = false
         else
             PrintTable(HOUSE_RULES_VOTE_STATE[v])
-            print(count(function (a) return not a == 0 and not a == nil end, HOUSE_RULES_VOTE_STATE[v]), PLAYERLIST:ConnectedPlayers():Size())
-            HOUSE_RULES_STATE[v] = count(function (a) return not a == 0 and not a == nil end, HOUSE_RULES_VOTE_STATE[v]) > PLAYERLIST:ConnectedPlayers():Size() / 2
+            print(count(function (a) return a ~= 0 and a ~= nil end, HOUSE_RULES_VOTE_STATE[v]), PLAYERLIST:ConnectedPlayers():Size())
+            HOUSE_RULES_STATE[v] = count(function (a) return a ~= 0 and a ~= nil end, HOUSE_RULES_VOTE_STATE[v]) > PLAYERLIST:ConnectedPlayers():Size() / 2
         end
     end
     print("HOUSE_RULE_STATE")
