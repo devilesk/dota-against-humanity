@@ -98,18 +98,13 @@ function DAH:IsState(state)
     return self.state == state
 end
 
-function DAH:DiscardHouseRuleEnabled()
-    return self:HasHouseRule(DAH.HOUSE_RULE.NEVER_EVER) or
-           self:HasHouseRule(DAH.HOUSE_RULE.REBOOTING_UNIVERSE) or
-           self:HasHouseRule(DAH.HOUSE_RULE.EXECUTIVE_PRIVILEGE) or
-           self:HasHouseRule(DAH.HOUSE_RULE.BETTER_LUCK)
-end
-
 function DAH:CanDiscard(player)
-    if self:IsState(DAH.STATE.CARD_SELECT) and self:DiscardHouseRuleEnabled() then
+    if self:IsState(DAH.STATE.CARD_SELECT) then
         if self:HasHouseRule(DAH.HOUSE_RULE.REBOOTING_UNIVERSE) then
             return player:CanSelect() and (not self:HasCzar() or not self:IsCzar(player)) and player:Points() > 1
-        else
+        elseif self:HasHouseRule(DAH.HOUSE_RULE.EXECUTIVE_PRIVILEGE) then
+            return self:HasCzar() and self:IsCzar(player)
+        elseif self:HasHouseRule(DAH.HOUSE_RULE.NEVER_EVER) then
             return player:CanSelect() and (not self:HasCzar() or not self:IsCzar(player))
         end
     end
@@ -117,7 +112,7 @@ function DAH:CanDiscard(player)
 end
 
 function DAH:CanDiscardAll(player)
-    return self:HasHouseRule(DAH.HOUSE_RULE.BETTER_LUCK) and self:CanDiscard(player)
+    return self:HasHouseRule(DAH.HOUSE_RULE.BETTER_LUCK) and player:CanSelect() and (not self:HasCzar() or not self:IsCzar(player))
 end
 
 function DAH:CanView(player)
