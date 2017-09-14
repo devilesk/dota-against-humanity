@@ -1,9 +1,9 @@
 "AddonInfo"
 {
     "TeamCount"   "1"
-    "maps"        "basic"
+    "maps"        "default"
     "IsPlayable"  "1"
-    "basic"
+    "default"
     {
         "MaxPlayers"     "8"
     }
